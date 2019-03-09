@@ -43,6 +43,13 @@ All design and inspiration credits goes to [Ranjit](https://www.uplabs.com/posts
     android:layout_height="56dp"
     app:rbb_tabs="@xml/tabs"/>
 ```
+* Add listener
+```kotlin
+bottomBar.setOnItemSelectListener( object :ReadableBottomBar.ItemSelectListener{
+    override fun onItemSelected(index: Int) {
+    }
+})
+```
 * Customize if you need
 ```xml
 <com.iammert.library.readablebottombar.ReadableBottomBar
