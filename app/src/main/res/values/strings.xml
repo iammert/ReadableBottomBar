@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ReadableBottomBar</string>
+    
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="bag">Bag</string>
+    <string name="favorite">Orders</string>
+    <string name="profile">Profile</string>
+</resources>

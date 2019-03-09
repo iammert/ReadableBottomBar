@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ReadableBottomBar">
+        <attr name="rbb_tabs" format="reference" />
+        <attr name="rbb_backgroundColor" format="color" />
+        <attr name="rbb_indicatorColor" format="color" />
+        <attr name="rbb_indicatorHeight" format="dimension" />
+        <attr name="rbb_initialIndex" format="integer" />
+        <attr name="rbb_textColor" format="color" />
+        <attr name="rbb_textSize" format="dimension" />
+    </declare-styleable>
+</resources>
