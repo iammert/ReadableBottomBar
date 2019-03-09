@@ -9,8 +9,6 @@
     <com.iammert.library.readablebottombar.ReadableBottomBar
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        app:rbb_tabs="@xml/tabs"
-        app:rbb_textColor="#333333"
-        android:layout_alignParentBottom="true"/>
+        app:rbb_tabs="@xml/tabs"/>
 
 </RelativeLayout>

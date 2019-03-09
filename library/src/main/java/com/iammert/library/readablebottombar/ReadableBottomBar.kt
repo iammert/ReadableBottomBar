@@ -10,6 +10,10 @@ import android.widget.LinearLayout
 class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
 
+    interface ItemSelectListener {
+        fun onItemSelected(index: Int)
+    }
+
     private val bottomBarItemConfigList: ArrayList<BottomBarItemConfig>
 
     private var tabInitialSelectedIndex = 0
@@ -28,6 +32,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private var currentSelectedView: BottomBarItemView? = null
 
     private var indicatorView: View? = null
+
+    private var itemSelectListener: ItemSelectListener? = null
 
     private var indicatorAnimator: ValueAnimator? = ValueAnimator.ofFloat(0f, 0f).apply {
         duration = 300L
@@ -71,6 +77,10 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    fun setOnItemSelectListener(itemSelectListener: ItemSelectListener) {
+        this.itemSelectListener = itemSelectListener
+    }
+
     private fun drawBottomBarItems() {
         val itemContainerLayout = LinearLayout(context).apply {
             layoutParams = LinearLayout.LayoutParams(layoutWidth.toInt(), layoutHeight.toInt())
@@ -94,6 +104,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                     currentSelectedView?.deselect()
                     currentSelectedView = it
                     currentSelectedView?.select()
+                    itemSelectListener?.onItemSelected(it.getItemIndex())
                 }
             }
 
