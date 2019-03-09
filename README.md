@@ -3,6 +3,12 @@ Yet another material bottom bar library for Android
 
 <img src="https://raw.githubusercontent.com/iammert/ReadableBottomBar/master/art/readablebottombar.png"/>
 
+## GIF
+<img src="https://raw.githubusercontent.com/iammert/ReadableBottomBar/master/art/preview.gif"/>
+
+## Design Credits
+All design and inspiration credits goes to [Ranjit](https://www.uplabs.com/posts/readable-tab-bar-concept).
+
 ## Usage
 
 * Create your tabs.xml under your res/xml/ folder
