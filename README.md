@@ -64,6 +64,19 @@ bottomBar.setOnItemSelectListener( object :ReadableBottomBar.ItemSelectListener{
     app:rbb_textSize=""/>
 ```
 
+## Setup
+```gradle
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.iammert:ReadableBottomBar:0.1'
+}
+```
 
 License
 --------
