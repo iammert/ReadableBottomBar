@@ -38,7 +38,7 @@ class ConfigurationXmlParser(private val context: Context, xmlRes: Int) {
                 KEY_DRAWABLE -> itemDrawable = getDrawable(parser, i)
             }
         }
-        return BottomBarItemConfig(text = itemText!!, drawable = itemDrawable!!, index = itemConfigList.size, selected = false)
+        return BottomBarItemConfig(text = itemText!!, drawable = itemDrawable!!, index = itemConfigList.size)
     }
 
     private fun getDrawable(parser: XmlResourceParser, i: Int): Drawable {

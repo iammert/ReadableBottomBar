@@ -8,5 +8,9 @@
         <attr name="rbb_initialIndex" format="integer" />
         <attr name="rbb_textColor" format="color" />
         <attr name="rbb_textSize" format="dimension" />
+        <attr name="rbb_activeItemType" format="enum">
+            <enum name="text" value="0" />
+            <enum name="icon" value="1" />
+        </attr>
     </declare-styleable>
 </resources>
