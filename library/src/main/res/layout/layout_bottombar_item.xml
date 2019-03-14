@@ -8,21 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:singleLine="true"/>
+        android:singleLine="true" />
 
-    <FrameLayout
-        android:id="@+id/layoutImageView"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="invisible">
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
-
-    </FrameLayout>
+        android:scaleType="centerInside" />
 
 </merge>

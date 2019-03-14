@@ -1,15 +1,18 @@
 package com.iammert.library.readablebottombar
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.FrameLayout
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
+import android.widget.FrameLayout
+import com.iammert.library.readablebottombar.ReadableBottomBar.Companion.ANIMATION_DURATION
+import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
 
 class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
@@ -17,32 +20,32 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
     private val layoutView = LayoutInflater.from(context).inflate(R.layout.layout_bottombar_item, this, true)
     private val textView = layoutView.findViewById<AppCompatTextView>(R.id.textView)
     private val imageView = layoutView.findViewById<AppCompatImageView>(R.id.imageView)
-    private val layoutImageView = layoutView.findViewById<FrameLayout>(R.id.layoutImageView)
 
     private var translateUpAnimation: TranslateAnimation? = null
     private var translateDownAnimation: TranslateAnimation? = null
 
-    private lateinit var bottomBarItemConfig: BottomBarItemConfig
+    private lateinit var animatedView: View
 
-    init {
-        setOnClickListener {
-            if (bottomBarItemConfig.selected) {
-                return@setOnClickListener
-            }
-            select()
-            bottomBarItemConfig.selected = true
-        }
+    fun setText(text: String) {
+        textView.text = text
     }
 
-    fun setItemConfig(bottomBarItemConfig: BottomBarItemConfig) {
-        this.bottomBarItemConfig = bottomBarItemConfig
-        textView.text = bottomBarItemConfig.text
-        imageView.setImageDrawable(bottomBarItemConfig.drawable)
-        layoutImageView.visibility = if (bottomBarItemConfig.selected) View.VISIBLE else View.INVISIBLE
+    fun setIconDrawable(drawable: Drawable) {
+        imageView.setImageDrawable(drawable)
+    }
+
+    fun setItemType(itemType: ItemType) {
+        animatedView = when (itemType) {
+            ItemType.Text -> textView
+            ItemType.Icon -> imageView
+        }
+        animatedView.visibility = View.INVISIBLE
+        animatedView.bringToFront()
     }
 
     fun setTabColor(tabColor: Int) {
-        layoutImageView.setBackgroundColor(tabColor)
+        textView.setBackgroundColor(tabColor)
+        imageView.setBackgroundColor(tabColor)
     }
 
     fun setTextSize(textSize: Float) {
@@ -53,19 +56,17 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
         textView.setTextColor(textColor)
     }
 
-    fun getItemIndex(): Int = bottomBarItemConfig.index
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         initializeAnimations()
     }
 
     fun select() {
-        layoutImageView.startAnimation(translateUpAnimation)
+        animatedView.startAnimation(translateUpAnimation)
     }
 
     fun deselect() {
-        layoutImageView.startAnimation(translateDownAnimation)
+        animatedView.startAnimation(translateDownAnimation)
     }
 
     private fun initializeAnimations() {
@@ -80,7 +81,7 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
                 }
 
                 override fun onAnimationStart(animation: Animation?) {
-                    layoutImageView.visibility = View.VISIBLE
+                    animatedView.visibility = View.VISIBLE
                 }
 
             })
@@ -94,7 +95,7 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    layoutImageView.visibility = View.INVISIBLE
+                    animatedView.visibility = View.INVISIBLE
                 }
 
                 override fun onAnimationStart(animation: Animation?) {
@@ -103,8 +104,4 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    companion object {
-
-        private const val ANIMATION_DURATION = 300L
-    }
 }

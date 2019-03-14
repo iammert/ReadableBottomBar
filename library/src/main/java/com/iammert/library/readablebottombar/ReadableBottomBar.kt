@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.LinearLayout
 
 class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -14,14 +15,23 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         fun onItemSelected(index: Int)
     }
 
-    private val bottomBarItemConfigList: ArrayList<BottomBarItemConfig>
+    enum class ItemType(val value: Int) {
+        Text(0),
+        Icon(1);
+
+        companion object {
+
+            fun getType(value: Int) = values().firstOrNull { it.value == value } ?: Icon
+
+        }
+    }
+
+    private val bottomBarItemList: List<BottomBarItem>
 
     private var tabInitialSelectedIndex = 0
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 10
-    private var tabItemTextColor: Int = Color.BLACK
-    private var tabItemTextSize: Float = 15f
 
     private var layoutWidth: Float = 0f
     private var layoutHeight: Float = 0f
@@ -36,7 +46,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private var itemSelectListener: ItemSelectListener? = null
 
     private var indicatorAnimator: ValueAnimator? = ValueAnimator.ofFloat(0f, 0f).apply {
-        duration = 300L
+        duration = ANIMATION_DURATION
         addUpdateListener { animation ->
             val marginLeft = animation.animatedValue as Float
             val marginParam: LinearLayout.LayoutParams = indicatorView?.layoutParams as LayoutParams
@@ -47,18 +57,32 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
     init {
         val typedArray = context.theme.obtainStyledAttributes(attrs, R.styleable.ReadableBottomBar, defStyleAttr, defStyleAttr)
+
         tabBackgroundColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_backgroundColor, Color.WHITE)
         tabIndicatorColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_indicatorColor, Color.BLACK)
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, 10)
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
-        tabItemTextColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
-        tabItemTextSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
+
+        val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
+        val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
+        val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
+
         val tabXmlResource = typedArray?.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
+        val bottomBarItemConfigList = ConfigurationXmlParser(context = context, xmlRes = tabXmlResource!!).parse()
 
         setBackgroundColor(tabBackgroundColor)
         orientation = VERTICAL
-        bottomBarItemConfigList = ConfigurationXmlParser(context = context, xmlRes = tabXmlResource!!).parse()
-        bottomBarItemConfigList[tabInitialSelectedIndex].selected = true
+
+        bottomBarItemList = bottomBarItemConfigList.map { config ->
+            BottomBarItem(
+                config.index,
+                config.text,
+                textSize,
+                textColor,
+                config.drawable,
+                activeItemType
+            )
+        }
 
         typedArray.recycle()
     }
@@ -68,7 +92,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         layoutWidth = w.toFloat()
         layoutHeight = h.toFloat()
 
-        itemWidth = layoutWidth / bottomBarItemConfigList.size
+        itemWidth = layoutWidth / bottomBarItemList.size
         itemHeight = layoutHeight
 
         post {
@@ -87,32 +111,51 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
             orientation = HORIZONTAL
         }
 
-        bottomBarItemConfigList.forEach { itemConfig ->
+        bottomBarItemList.forEach { item ->
             val bottomBarItem = BottomBarItemView(context).apply {
                 layoutParams = LinearLayout.LayoutParams(itemWidth.toInt(), itemHeight.toInt() - tabIndicatorHeight)
-                setItemConfig(itemConfig)
+
+                setText(item.text)
+                setItemType(item.type)
+                setIconDrawable(item.drawable)
+
+                setTextSize(item.textSize)
+                setTextColor(item.textColor)
                 setTabColor(tabBackgroundColor)
-                setTextSize(tabItemTextSize)
-                setTextColor(tabItemTextColor)
+
                 setOnClickListener {
+
                     if (it == currentSelectedView) {
                         return@setOnClickListener
                     }
-                    animateIndicator(
-                            previousItemIndex = currentSelectedView?.getItemIndex() ?: 0,
-                            currentItemIndex = (it as BottomBarItemView).getItemIndex())
+
+                    animateIndicator(item.index)
+
                     currentSelectedView?.deselect()
-                    currentSelectedView = it
+                    currentSelectedView = this
                     currentSelectedView?.select()
-                    itemSelectListener?.onItemSelected(it.getItemIndex())
+                    itemSelectListener?.onItemSelected(item.index)
+
                 }
             }
 
             itemContainerLayout.addView(bottomBarItem)
 
-            if (itemConfig.selected) {
+            if (item.index == tabInitialSelectedIndex) {
                 currentSelectedView = bottomBarItem
+
+                val listener = object : ViewTreeObserver.OnGlobalLayoutListener {
+
+                    override fun onGlobalLayout() {
+                        bottomBarItem.select()
+                        bottomBarItem.viewTreeObserver.removeGlobalOnLayoutListener(this)
+                    }
+
+                }
+
+                bottomBarItem.viewTreeObserver.addOnGlobalLayoutListener(listener)
             }
+
         }
 
         addView(itemContainerLayout)
@@ -128,10 +171,17 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         addView(indicatorView)
     }
 
-    private fun animateIndicator(previousItemIndex: Int, currentItemIndex: Int) {
-        val previousMargin: Float = previousItemIndex * itemWidth
+    private fun animateIndicator(currentItemIndex: Int) {
+        val previousMargin: Float = (indicatorView?.layoutParams as? LinearLayout.LayoutParams)?.leftMargin?.toFloat() ?: 0F
         val currentMargin: Float = currentItemIndex * itemWidth
         indicatorAnimator?.setFloatValues(previousMargin, currentMargin)
         indicatorAnimator?.start()
     }
+
+    companion object {
+
+        const val ANIMATION_DURATION = 300L
+
+    }
+
 }
