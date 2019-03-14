@@ -62,7 +62,7 @@ bottomBar.setOnItemSelectListener( object :ReadableBottomBar.ItemSelectListener{
     app:rbb_initialIndex=""
     app:rbb_backgroundColor=""
     app:rbb_textSize=""
-    app:rbb_activeItemType="text/icon"/>
+    app:rbb_activeItemType="text or icon"/>
 ```
 
 ## Setup
