@@ -2,8 +2,6 @@ package com.iammert.library.readablebottombar
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +9,8 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import android.widget.FrameLayout
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import com.iammert.library.readablebottombar.ReadableBottomBar.Companion.ANIMATION_DURATION
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
