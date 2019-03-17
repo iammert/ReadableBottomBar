@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
+import java.util.ArrayList
 
 class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
@@ -27,6 +28,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private val bottomBarItemList: List<BottomBarItem>
+    private val bottomBarViewItemList  =  ArrayList<BottomBarItemView>()
 
     private var tabInitialSelectedIndex = 0
     private var tabBackgroundColor: Int = Color.WHITE
@@ -75,12 +77,12 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         bottomBarItemList = bottomBarItemConfigList.map { config ->
             BottomBarItem(
-                config.index,
-                config.text,
-                textSize,
-                textColor,
-                config.drawable,
-                activeItemType
+                    config.index,
+                    config.text,
+                    textSize,
+                    textColor,
+                    config.drawable,
+                    activeItemType
             )
         }
 
@@ -104,6 +106,12 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     fun setOnItemSelectListener(itemSelectListener: ItemSelectListener) {
         this.itemSelectListener = itemSelectListener
     }
+
+    fun setSelectedItem(position : Int){
+        getChildViewAt(position)?.callOnClick()
+    }
+
+    fun getChildViewAt(position : Int) = bottomBarViewItemList.getOrNull(position)
 
     private fun drawBottomBarItems() {
         val itemContainerLayout = LinearLayout(context).apply {
@@ -138,7 +146,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
                 }
             }
-
+            bottomBarViewItemList.add(bottomBarItem)
             itemContainerLayout.addView(bottomBarItem)
 
             if (item.index == tabInitialSelectedIndex) {
