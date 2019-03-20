@@ -50,6 +50,11 @@ bottomBar.setOnItemSelectListener( object :ReadableBottomBar.ItemSelectListener{
     }
 })
 ```
+
+* Set index at runtime
+```kotlin
+bottomBar.selectItem(index)
+```
 * Customize if you need
 ```xml
 <com.iammert.library.readablebottombar.ReadableBottomBar
