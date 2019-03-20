@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
+import java.lang.IllegalArgumentException
 
 class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
@@ -75,12 +76,12 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         bottomBarItemList = bottomBarItemConfigList.map { config ->
             BottomBarItem(
-                config.index,
-                config.text,
-                textSize,
-                textColor,
-                config.drawable,
-                activeItemType
+                    config.index,
+                    config.text,
+                    textSize,
+                    textColor,
+                    config.drawable,
+                    activeItemType
             )
         }
 
@@ -105,10 +106,27 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         this.itemSelectListener = itemSelectListener
     }
 
+    fun selectItem(index: Int) {
+        if (index < 0 || index > bottomBarItemList.size) {
+            throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.size}")
+        }
+
+        val item = bottomBarItemList[index]
+        for (i in 0 until childCount) {
+            if (TAG_CONTAINER == getChildAt(i).tag) {
+                val selectedItemView = ((getChildAt(i) as LinearLayout).getChildAt(index) as BottomBarItemView)
+                if (selectedItemView != currentSelectedView) {
+                    onSelected(item.index, selectedItemView)
+                }
+            }
+        }
+    }
+
     private fun drawBottomBarItems() {
         val itemContainerLayout = LinearLayout(context).apply {
             layoutParams = LinearLayout.LayoutParams(layoutWidth.toInt(), layoutHeight.toInt())
             orientation = HORIZONTAL
+            tag = TAG_CONTAINER
         }
 
         bottomBarItemList.forEach { item ->
@@ -129,13 +147,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                         return@setOnClickListener
                     }
 
-                    animateIndicator(item.index)
-
-                    currentSelectedView?.deselect()
-                    currentSelectedView = this
-                    currentSelectedView?.select()
-                    itemSelectListener?.onItemSelected(item.index)
-
+                    onSelected(item.index, this)
                 }
             }
 
@@ -172,15 +184,27 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun animateIndicator(currentItemIndex: Int) {
-        val previousMargin: Float = (indicatorView?.layoutParams as? LinearLayout.LayoutParams)?.leftMargin?.toFloat() ?: 0F
+        val previousMargin: Float = (indicatorView?.layoutParams as? LinearLayout.LayoutParams)?.leftMargin?.toFloat()
+                ?: 0F
         val currentMargin: Float = currentItemIndex * itemWidth
         indicatorAnimator?.setFloatValues(previousMargin, currentMargin)
         indicatorAnimator?.start()
     }
 
+    private fun onSelected(index: Int, bottomBarItemView: BottomBarItemView) {
+        animateIndicator(index)
+
+        currentSelectedView?.deselect()
+        currentSelectedView = bottomBarItemView
+        currentSelectedView?.select()
+        itemSelectListener?.onItemSelected(index)
+    }
+
     companion object {
 
         const val ANIMATION_DURATION = 300L
+
+        const val TAG_CONTAINER = "TAG_CONTAINER"
 
     }
 
