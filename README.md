@@ -75,7 +75,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.iammert:ReadableBottomBar:0.1'
+    implementation 'com.github.iammert:ReadableBottomBar:0.2'
 }
 ```
 
