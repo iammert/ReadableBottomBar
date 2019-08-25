@@ -56,6 +56,11 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
         textView.setTextColor(textColor)
     }
 
+
+    fun setIconColor(iconColor: Int) {
+        imageView.setColorFilter(iconColor)
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         initializeAnimations()
