@@ -66,6 +66,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
         val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
+        val iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
         val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
 
         val tabXmlResource = typedArray?.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
@@ -80,6 +81,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                     config.text,
                     textSize,
                     textColor,
+                    iconColor,
                     config.drawable,
                     activeItemType
             )
@@ -136,7 +138,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                 setText(item.text)
                 setItemType(item.type)
                 setIconDrawable(item.drawable)
-
+                setIconColor(item.iconColor)
                 setTextSize(item.textSize)
                 setTextColor(item.textColor)
                 setTabColor(tabBackgroundColor)
