@@ -3,6 +3,7 @@ package com.iammert.library.readablebottombar
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
+import android.support.annotation.XmlRes
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
@@ -26,12 +27,17 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    private val bottomBarItemList: List<BottomBarItem>
+    private var bottomBarItemList: List<BottomBarItem>
 
     private var tabInitialSelectedIndex = 0
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 10
+
+    private var textSize: Float = 15f
+    private var textColor: Int = Color.BLACK
+    private var iconColor: Int = Color.BLACK
+    private var activeItemType: ItemType = ItemType.Icon
 
     private var layoutWidth: Float = 0f
     private var layoutHeight: Float = 0f
@@ -65,10 +71,10 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, 10)
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
 
-        val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
-        val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
-        val iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
-        val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
+        textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
+        textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
+        iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
+        activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
 
         val tabXmlResource = typedArray?.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
         val bottomBarItemConfigList = ConfigurationXmlParser(context = context, xmlRes = tabXmlResource!!).parse()
@@ -211,6 +217,37 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         currentSelectedView?.select()
         itemSelectListener?.onItemSelected(index)
     }
+
+
+    public fun setTabItems(items : List<BottomBarItem>) {
+        bottomBarItemList = items
+        post {
+            drawIndicator()
+            drawBottomBarItems()
+        }
+    }
+
+    /*public fun setTabItems(@XmlRes tabResource: Int) {
+        val bottomBarItemConfigList = ConfigurationXmlParser(context = context,
+                xmlRes = tabResource).parse()
+
+        bottomBarItemList = bottomBarItemConfigList.map { config ->
+            BottomBarItem(
+                    config.index,
+                    config.text,
+                    textSize,
+                    textColor,
+                    iconColor,
+                    config.drawable,
+                    activeItemType
+            )
+        }
+        post {
+            drawIndicator()
+            drawBottomBarItems()
+        }
+    }*/
+
 
     companion object {
 
