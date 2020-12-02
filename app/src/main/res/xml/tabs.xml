@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tabs>
     <tab
+        id="@+id/home_button"
         drawable="@drawable/ic_home_black_24dp"
         text="@string/home" />
 

@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         //bottomBar.setTabItems(R.xml.tabs_disabled)
         var items =  ArrayList<BottomBarItem>()
 
-        items.add(BottomBarItem(0, "Test", 15f,
+        items.add(BottomBarItem(0, 0, "Test", 15f,
                 Color.BLACK, Color.BLACK, getDrawable(R.drawable.ic_home_black_24dp),
                 ReadableBottomBar.ItemType.Icon))
         bottomBar.setTabItems(items)
