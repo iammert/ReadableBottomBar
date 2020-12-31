@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        drawable="@drawable/ic_home_black_24dp"
+        text="@string/home" />
+
+    <tab
+        drawable="@drawable/ic_search_black_24dp"
+        text="@string/search" />
+
+</tabs>

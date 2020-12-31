@@ -2,28 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <com.iammert.library.readablebottombar.ReadableBottomBar
         android:layout_width="match_parent"
         android:layout_height="64dp"
         app:rbb_activeItemType="icon"
-        app:rbb_tabs="@xml/tabs"/>
+        app:rbb_tabs="@xml/tabs" />
 
     <com.iammert.library.readablebottombar.ReadableBottomBar
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_marginTop="64dp"
         app:rbb_activeItemType="text"
-        app:rbb_tabs="@xml/tabs"/>
+        app:rbb_tabs="@xml/tabs" />
 
     <com.iammert.library.readablebottombar.ReadableBottomBar
+        android:id="@+id/dynamic_bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_marginTop="64dp"
-        app:rbb_tabs="@xml/tabs"/>
+        app:rbb_tabs="@xml/tabs" />
 
 </LinearLayout>

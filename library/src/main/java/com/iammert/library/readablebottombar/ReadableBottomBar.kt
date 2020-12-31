@@ -7,13 +7,12 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
-import java.lang.IllegalArgumentException
 
 class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
 
     interface ItemSelectListener {
-        fun onItemSelected(index: Int)
+        fun onItemSelected(index: Int, id: Int)
     }
 
     enum class ItemType(val value: Int) {
@@ -27,12 +26,17 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    private val bottomBarItemList: List<BottomBarItem>
+    private var bottomBarItemList: List<BottomBarItem>
 
     private var tabInitialSelectedIndex = 0
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 10
+
+    private var textSize: Float = 15f
+    private var textColor: Int = Color.BLACK
+    private var iconColor: Int = Color.BLACK
+    private var activeItemType: ItemType = ItemType.Icon
 
     private var layoutWidth: Float = 0f
     private var layoutHeight: Float = 0f
@@ -46,11 +50,13 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
     private var itemSelectListener: ItemSelectListener? = null
 
+    private var pendingSelectable: Int? = null
+
     private var indicatorAnimator: ValueAnimator? = ValueAnimator.ofFloat(0f, 0f).apply {
         duration = ANIMATION_DURATION
         addUpdateListener { animation ->
             val marginLeft = animation.animatedValue as Float
-            val marginParam: LinearLayout.LayoutParams = indicatorView?.layoutParams as LayoutParams
+            val marginParam: LayoutParams = indicatorView?.layoutParams as LayoutParams
             marginParam.setMargins(marginLeft.toInt(), marginParam.topMargin, marginParam.rightMargin, marginParam.bottomMargin)
             indicatorView?.layoutParams = marginParam
         }
@@ -64,10 +70,10 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, 10)
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
 
-        val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
-        val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
-        val iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
-        val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
+        textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
+        textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
+        iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
+        activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
 
         val tabXmlResource = typedArray?.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
         val bottomBarItemConfigList = ConfigurationXmlParser(context = context, xmlRes = tabXmlResource!!).parse()
@@ -77,6 +83,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         bottomBarItemList = bottomBarItemConfigList.map { config ->
             BottomBarItem(
+                    config.id,
                     config.index,
                     config.text,
                     textSize,
@@ -114,26 +121,31 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
 
         val item = bottomBarItemList[index]
-        for (i in 0 until childCount) {
-            if (TAG_CONTAINER == getChildAt(i).tag) {
-                val selectedItemView = ((getChildAt(i) as LinearLayout).getChildAt(index) as BottomBarItemView)
-                if (selectedItemView != currentSelectedView) {
-                    onSelected(item.index, selectedItemView)
+        if (childCount > 0) {
+            for (i in 0 until childCount) {
+                if (TAG_CONTAINER == getChildAt(i).tag) {
+                    val selectedItemView = ((getChildAt(i) as LinearLayout).getChildAt(index) as BottomBarItemView)
+                    if (selectedItemView != currentSelectedView) {
+                        onSelected(item.id, item.index, selectedItemView)
+                    }
                 }
             }
+        } else {
+            pendingSelectable = index
         }
     }
 
+
     private fun drawBottomBarItems() {
         val itemContainerLayout = LinearLayout(context).apply {
-            layoutParams = LinearLayout.LayoutParams(layoutWidth.toInt(), layoutHeight.toInt())
+            layoutParams = LayoutParams(layoutWidth.toInt(), layoutHeight.toInt())
             orientation = HORIZONTAL
             tag = TAG_CONTAINER
         }
 
         bottomBarItemList.forEach { item ->
             val bottomBarItem = BottomBarItemView(context).apply {
-                layoutParams = LinearLayout.LayoutParams(itemWidth.toInt(), itemHeight.toInt() - tabIndicatorHeight)
+                layoutParams = LayoutParams(itemWidth.toInt(), itemHeight.toInt() - tabIndicatorHeight)
 
                 setText(item.text)
                 setItemType(item.type)
@@ -149,7 +161,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                         return@setOnClickListener
                     }
 
-                    onSelected(item.index, this)
+                    onSelected(item.id, item.index, this)
                 }
             }
 
@@ -163,8 +175,12 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                     override fun onGlobalLayout() {
                         bottomBarItem.select()
                         bottomBarItem.viewTreeObserver.removeGlobalOnLayoutListener(this)
-                    }
 
+                        pendingSelectable?.let {
+                            selectItem(it)
+                            pendingSelectable = null
+                        }
+                    }
                 }
 
                 bottomBarItem.viewTreeObserver.addOnGlobalLayoutListener(listener)
@@ -177,7 +193,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun drawIndicator() {
         indicatorView = View(context).apply {
-            val indicatorLayoutParams = LinearLayout.LayoutParams(itemWidth.toInt(), tabIndicatorHeight)
+            val indicatorLayoutParams = LayoutParams(itemWidth.toInt(), tabIndicatorHeight)
             indicatorLayoutParams.setMargins((tabInitialSelectedIndex * itemWidth).toInt(), 0, 0, 0)
             layoutParams = indicatorLayoutParams
             setBackgroundColor(tabIndicatorColor)
@@ -186,21 +202,31 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     private fun animateIndicator(currentItemIndex: Int) {
-        val previousMargin: Float = (indicatorView?.layoutParams as? LinearLayout.LayoutParams)?.leftMargin?.toFloat()
+        val previousMargin: Float = (indicatorView?.layoutParams as? LayoutParams)?.leftMargin?.toFloat()
                 ?: 0F
         val currentMargin: Float = currentItemIndex * itemWidth
         indicatorAnimator?.setFloatValues(previousMargin, currentMargin)
         indicatorAnimator?.start()
     }
 
-    private fun onSelected(index: Int, bottomBarItemView: BottomBarItemView) {
+    private fun onSelected(id: Int, index: Int, bottomBarItemView: BottomBarItemView) {
         animateIndicator(index)
 
         currentSelectedView?.deselect()
         currentSelectedView = bottomBarItemView
         currentSelectedView?.select()
-        itemSelectListener?.onItemSelected(index)
+        itemSelectListener?.onItemSelected(index, id)
     }
+
+
+    public fun setTabItems(items: List<BottomBarItem>) {
+        bottomBarItemList = items
+        post {
+            drawIndicator()
+            drawBottomBarItems()
+        }
+    }
+
 
     companion object {
 

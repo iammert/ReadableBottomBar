@@ -32,13 +32,19 @@ class ConfigurationXmlParser(private val context: Context, xmlRes: Int) {
         val attributeCount = parser.attributeCount
         var itemText: String? = null
         var itemDrawable: Drawable? = null
+        var itemId: Int = -1
         for (i in 0 until attributeCount) {
             when (parser.getAttributeName(i)) {
+                KEY_ID -> itemId = parser.getAttributeIntValue(i, -1)
                 KEY_TEXT -> itemText = getText(parser, i)
                 KEY_DRAWABLE -> itemDrawable = getDrawable(parser, i)
             }
         }
-        return BottomBarItemConfig(text = itemText!!, drawable = itemDrawable!!, index = itemConfigList.size)
+        return BottomBarItemConfig(
+                id = itemId,
+                text = itemText!!,
+                drawable = itemDrawable!!,
+                index = itemConfigList.size)
     }
 
     private fun getDrawable(parser: XmlResourceParser, i: Int): Drawable {
@@ -50,6 +56,7 @@ class ConfigurationXmlParser(private val context: Context, xmlRes: Int) {
     }
 
     companion object {
+        const val KEY_ID: String = "id"
         const val KEY_TEXT: String = "text"
         const val KEY_DRAWABLE: String = "drawable"
 
