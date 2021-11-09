@@ -2,8 +2,8 @@ package com.iammert.library.readablebottombar
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.support.v7.widget.AppCompatImageView
-import android.support.v7.widget.AppCompatTextView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +15,14 @@ import com.iammert.library.readablebottombar.ReadableBottomBar.Companion.ANIMATI
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
 
-class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
+class BottomBarItemView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
-    private val layoutView = LayoutInflater.from(context).inflate(R.layout.layout_bottombar_item, this, true)
+    private val layoutView =
+        LayoutInflater.from(context).inflate(R.layout.layout_bottombar_item, this, true)
     private val textView = layoutView.findViewById<AppCompatTextView>(R.id.textView)
     private val imageView = layoutView.findViewById<AppCompatImageView>(R.id.imageView)
 
