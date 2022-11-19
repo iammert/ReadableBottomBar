@@ -3,7 +3,7 @@ package com.iammert.library.readablebottombar
 import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import org.xmlpull.v1.XmlPullParserException
 
 class ConfigurationXmlParser(private val context: Context, xmlRes: Int) {

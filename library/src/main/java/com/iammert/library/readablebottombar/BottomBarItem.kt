@@ -1,7 +1,7 @@
 package com.iammert.library.readablebottombar
 
 import android.graphics.drawable.Drawable
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
 data class BottomBarItem(
