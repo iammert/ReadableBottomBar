@@ -109,8 +109,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun selectItem(index: Int) {
-        if (index < 0 || index > bottomBarItemList.size) {
-            throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.size}")
+        if (index !in bottomBarItemList.indices) {
+            throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.lastIndex}")
         }
 
         val item = bottomBarItemList[index]
