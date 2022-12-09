@@ -30,6 +30,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private val bottomBarItemList: List<BottomBarItem>
 
     private var tabInitialSelectedIndex = 0
+    private var selectedIndex = 0
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 10
@@ -87,6 +88,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
             )
         }
 
+        selectedIndex = tabInitialSelectedIndex
+
         typedArray.recycle()
     }
 
@@ -99,6 +102,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         itemHeight = layoutHeight
 
         post {
+            indicatorAnimator?.cancel()
+            removeAllViews()
             drawIndicator()
             drawBottomBarItems()
         }
@@ -155,7 +160,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
             itemContainerLayout.addView(bottomBarItem)
 
-            if (item.index == tabInitialSelectedIndex) {
+            if (item.index == selectedIndex) {
                 currentSelectedView = bottomBarItem
 
                 val listener = object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -178,7 +183,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private fun drawIndicator() {
         indicatorView = View(context).apply {
             val indicatorLayoutParams = LinearLayout.LayoutParams(itemWidth.toInt(), tabIndicatorHeight)
-            indicatorLayoutParams.setMargins((tabInitialSelectedIndex * itemWidth).toInt(), 0, 0, 0)
+            indicatorLayoutParams.setMargins((selectedIndex * itemWidth).toInt(), 0, 0, 0)
             layoutParams = indicatorLayoutParams
             setBackgroundColor(tabIndicatorColor)
         }
@@ -197,6 +202,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         animateIndicator(index)
 
         currentSelectedView?.deselect()
+        selectedIndex = index
         currentSelectedView = bottomBarItemView
         currentSelectedView?.select()
         itemSelectListener?.onItemSelected(index)
