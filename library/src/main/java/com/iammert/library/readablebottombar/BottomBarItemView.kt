@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -48,8 +49,8 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
         imageView.setBackgroundColor(tabColor)
     }
 
-    fun setTextSize(textSize: Float) {
-        textView.textSize = textSize
+    fun setTextSize(textSizePx: Float) {
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizePx)
     }
 
     fun setTextColor(textColor: Int) {

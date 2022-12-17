@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
@@ -65,7 +66,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, 10)
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
 
-        val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, 15f)
+        val defaultTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP, resources.displayMetrics)
+        val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, defaultTextSize)
         val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
         val iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
         val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
@@ -211,6 +213,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     companion object {
 
         const val ANIMATION_DURATION = 300L
+
+        private const val DEFAULT_TEXT_SIZE_SP = 15f
 
         const val TAG_CONTAINER = "TAG_CONTAINER"
 
