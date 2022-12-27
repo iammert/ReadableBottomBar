@@ -34,7 +34,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private var selectedIndex = 0
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
-    private var tabIndicatorHeight: Int = 10
+    private var tabIndicatorHeight: Int = 0
 
     private var layoutWidth: Float = 0f
     private var layoutHeight: Float = 0f
@@ -63,7 +63,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         tabBackgroundColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_backgroundColor, Color.WHITE)
         tabIndicatorColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_indicatorColor, Color.BLACK)
-        tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, 10)
+        val defaultIndicatorHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_INDICATOR_HEIGHT_DP, resources.displayMetrics).toInt()
+        tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, defaultIndicatorHeight)
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
 
         val defaultTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP, resources.displayMetrics)
@@ -215,6 +216,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         const val ANIMATION_DURATION = 300L
 
         private const val DEFAULT_TEXT_SIZE_SP = 15f
+
+        private const val DEFAULT_INDICATOR_HEIGHT_DP = 4f
 
         const val TAG_CONTAINER = "TAG_CONTAINER"
 
