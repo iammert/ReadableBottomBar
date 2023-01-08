@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fixtures for unit tests. Only packaged in debug builds. -->
+<resources>
+    <string name="rbb_test_home">Home</string>
+    <string name="rbb_test_search">Search</string>
+    <string name="rbb_test_profile">Profile</string>
+</resources>

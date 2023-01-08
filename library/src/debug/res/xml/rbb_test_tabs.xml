@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        drawable="@android:drawable/ic_menu_view"
+        text="@string/rbb_test_home" />
+
+    <tab
+        drawable="@android:drawable/ic_menu_search"
+        text="@string/rbb_test_search" />
+
+    <tab
+        drawable="@android:drawable/ic_menu_myplaces"
+        text="@string/rbb_test_profile" />
+</tabs>
