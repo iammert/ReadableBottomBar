@@ -21,4 +21,12 @@ class ConfigurationXmlParserTest {
         assertEquals(listOf(0, 1, 2), configs.map { it.index })
         configs.forEach { assertNotNull(it.drawable) }
     }
+
+    @Test
+    fun parse_calledTwice_returnsTheSameTabs() {
+        val parser = ConfigurationXmlParser(context, R.xml.rbb_test_tabs)
+        val first = parser.parse().map { it.text }
+
+        assertEquals(first, parser.parse().map { it.text })
+    }
 }
