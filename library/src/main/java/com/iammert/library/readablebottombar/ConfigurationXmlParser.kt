@@ -1,6 +1,7 @@
 package com.iammert.library.readablebottombar
 
 import android.content.Context
+import android.content.res.Resources
 import android.content.res.XmlResourceParser
 import android.graphics.drawable.Drawable
 import androidx.annotation.XmlRes
@@ -21,8 +22,7 @@ class ConfigurationXmlParser(private val context: Context, @XmlRes private val x
                     }
                 } while (eventType != XmlResourceParser.END_DOCUMENT)
             } catch (e: XmlPullParserException) {
-                e.printStackTrace()
-                throw Exception()
+                throw IllegalArgumentException("Tab configuration ${resourceName()} is not valid XML", e)
             }
         }
         return itemConfigList
@@ -38,11 +38,29 @@ class ConfigurationXmlParser(private val context: Context, @XmlRes private val x
                 KEY_DRAWABLE -> itemDrawable = getDrawable(parser, i)
             }
         }
-        return BottomBarItemConfig(text = itemText!!, drawable = itemDrawable!!, index = index)
+        return BottomBarItemConfig(
+                text = itemText ?: throw missingAttribute(KEY_TEXT, index),
+                drawable = itemDrawable ?: throw missingAttribute(KEY_DRAWABLE, index),
+                index = index
+        )
+    }
+
+    private fun missingAttribute(name: String, index: Int): IllegalArgumentException {
+        return IllegalArgumentException("Tab at position $index in ${resourceName()} is missing the '$name' attribute")
+    }
+
+    private fun resourceName(): String {
+        return try {
+            context.resources.getResourceEntryName(xmlRes)
+        } catch (e: Resources.NotFoundException) {
+            "#0x${Integer.toHexString(xmlRes)}"
+        }
     }
 
     private fun getDrawable(parser: XmlResourceParser, i: Int): Drawable {
-        return ContextCompat.getDrawable(context, parser.getAttributeResourceValue(i, 0))!!
+        val resId = parser.getAttributeResourceValue(i, 0)
+        return ContextCompat.getDrawable(context, resId)
+                ?: throw IllegalArgumentException("Drawable #0x${Integer.toHexString(resId)} could not be loaded")
     }
 
     private fun getText(parser: XmlResourceParser, i: Int): String {

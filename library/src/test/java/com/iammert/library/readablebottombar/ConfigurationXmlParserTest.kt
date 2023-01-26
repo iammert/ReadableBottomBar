@@ -5,6 +5,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -28,5 +30,16 @@ class ConfigurationXmlParserTest {
         val first = parser.parse().map { it.text }
 
         assertEquals(first, parser.parse().map { it.text })
+    }
+
+    @Test
+    fun parse_missingText_reportsTabPositionAndAttribute() {
+        val error = assertThrows(IllegalArgumentException::class.java) {
+            ConfigurationXmlParser(context, R.xml.rbb_test_tabs_missing_text).parse()
+        }
+
+        assertTrue(error.message!!.contains("position 1"))
+        assertTrue(error.message!!.contains("'text'"))
+        assertTrue(error.message!!.contains("rbb_test_tabs_missing_text"))
     }
 }
