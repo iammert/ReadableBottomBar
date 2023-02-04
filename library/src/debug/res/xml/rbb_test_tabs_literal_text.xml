@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        drawable="@android:drawable/ic_menu_view"
+        text="Feed" />
+</tabs>

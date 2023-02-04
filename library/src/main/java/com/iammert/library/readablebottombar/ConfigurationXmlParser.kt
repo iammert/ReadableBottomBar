@@ -64,7 +64,8 @@ class ConfigurationXmlParser(private val context: Context, @XmlRes private val x
     }
 
     private fun getText(parser: XmlResourceParser, i: Int): String {
-        return context.getString(parser.getAttributeResourceValue(i, 0))
+        val resId = parser.getAttributeResourceValue(i, 0)
+        return if (resId != 0) context.getString(resId) else parser.getAttributeValue(i)
     }
 
     companion object {

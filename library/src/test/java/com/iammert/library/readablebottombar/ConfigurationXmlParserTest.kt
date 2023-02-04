@@ -42,4 +42,11 @@ class ConfigurationXmlParserTest {
         assertTrue(error.message!!.contains("'text'"))
         assertTrue(error.message!!.contains("rbb_test_tabs_missing_text"))
     }
+
+    @Test
+    fun parse_literalText_isUsedAsIs() {
+        val configs = ConfigurationXmlParser(context, R.xml.rbb_test_tabs_literal_text).parse()
+
+        assertEquals("Feed", configs.single().text)
+    }
 }
