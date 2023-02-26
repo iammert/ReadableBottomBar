@@ -2,6 +2,9 @@ package com.iammert.library.readablebottombar
 
 import android.app.Activity
 import android.os.Looper
+import android.os.Parcel
+import android.os.Parcelable
+import android.util.SparseArray
 import android.view.View
 import android.widget.FrameLayout
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -59,6 +62,48 @@ class ReadableBottomBarTest {
         assertEquals(3, bar.findItemViews().size)
     }
 
+    @Test
+    fun selectedIndex_survivesSaveAndRestore() {
+        val bar = createBar().apply { id = BAR_ID }
+        layout(bar)
+        bar.selectItem(2)
+        val container = SparseArray<Parcelable>()
+        bar.saveHierarchyState(container)
+
+        val restored = createBar().apply { id = BAR_ID }
+        restored.restoreHierarchyState(parcelRoundTrip(container))
+        layout(restored)
+
+        assertEquals(2, restored.selectedIndex)
+    }
+
+    @Test
+    fun restoreAfterLayout_selectsSavedItem() {
+        val bar = createBar().apply { id = BAR_ID }
+        layout(bar)
+        bar.selectItem(1)
+        val container = SparseArray<Parcelable>()
+        bar.saveHierarchyState(container)
+
+        val restored = createBar().apply { id = BAR_ID }
+        layout(restored)
+        restored.restoreHierarchyState(container)
+
+        assertEquals(1, restored.selectedIndex)
+    }
+
+    private fun parcelRoundTrip(container: SparseArray<Parcelable>): SparseArray<Parcelable> {
+        val parcel = Parcel.obtain()
+        try {
+            parcel.writeSparseArray(container as SparseArray<Any>)
+            parcel.setDataPosition(0)
+            @Suppress("UNCHECKED_CAST")
+            return parcel.readSparseArray<Parcelable>(javaClass.classLoader) as SparseArray<Parcelable>
+        } finally {
+            parcel.recycle()
+        }
+    }
+
     private fun createBar(initialIndex: Int = 0): ReadableBottomBar {
         val attrs = Robolectric.buildAttributeSet()
                 .addAttribute(R.attr.rbb_tabs, "@xml/rbb_test_tabs")
@@ -82,5 +127,9 @@ class ReadableBottomBarTest {
         if (this is BottomBarItemView) return listOf(this)
         if (this !is android.view.ViewGroup) return emptyList()
         return (0 until childCount).flatMap { getChildAt(it).findItemViews() }
+    }
+
+    private companion object {
+        const val BAR_ID = 0x7f0b0001
     }
 }

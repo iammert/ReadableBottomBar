@@ -3,6 +3,8 @@ package com.iammert.library.readablebottombar
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -116,6 +118,26 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
+    override fun onSaveInstanceState(): Parcelable {
+        return SavedState(super.onSaveInstanceState()).also { it.selectedIndex = selectedIndex }
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state !is SavedState) {
+            super.onRestoreInstanceState(state)
+            return
+        }
+        super.onRestoreInstanceState(state.superState)
+        if (state.selectedIndex !in bottomBarItemList.indices) {
+            return
+        }
+        if (currentSelectedView == null) {
+            selectedIndex = state.selectedIndex
+        } else {
+            selectItem(state.selectedIndex)
+        }
+    }
+
     fun setOnItemSelectListener(itemSelectListener: ItemSelectListener) {
         this.itemSelectListener = itemSelectListener
     }
@@ -213,6 +235,30 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         currentSelectedView = bottomBarItemView
         currentSelectedView?.select()
         itemSelectListener?.onItemSelected(index)
+    }
+
+    internal class SavedState : BaseSavedState {
+
+        var selectedIndex = 0
+
+        constructor(superState: Parcelable?) : super(superState)
+
+        private constructor(parcel: Parcel) : super(parcel) {
+            selectedIndex = parcel.readInt()
+        }
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeInt(selectedIndex)
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR = object : Parcelable.Creator<SavedState> {
+                override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+                override fun newArray(size: Int) = arrayOfNulls<SavedState>(size)
+            }
+        }
     }
 
     companion object {
