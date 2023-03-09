@@ -63,6 +63,18 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun selectItem_beforeLayout_isAppliedOnceItemsAreDrawn() {
+        val bar = createBar()
+
+        bar.selectItem(2)
+        layout(bar)
+
+        assertEquals(2, bar.selectedIndex)
+        val indicator = bar.getChildAt(0)
+        assertEquals(400, indicator.left)
+    }
+
+    @Test
     fun selectedIndex_survivesSaveAndRestore() {
         val bar = createBar().apply { id = BAR_ID }
         layout(bar)

@@ -147,6 +147,16 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
             throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.lastIndex}")
         }
 
+        if (currentSelectedView == null) {
+            // Item views are created after the first layout pass. Remember the
+            // selection so they are drawn with the right tab selected.
+            if (index != selectedIndex) {
+                selectedIndex = index
+                itemSelectListener?.onItemSelected(index)
+            }
+            return
+        }
+
         val item = bottomBarItemList[index]
         for (i in 0 until childCount) {
             if (TAG_CONTAINER == getChildAt(i).tag) {
