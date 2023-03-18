@@ -14,6 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
+import java.time.Duration
 
 @RunWith(AndroidJUnit4::class)
 class ReadableBottomBarTest {
@@ -45,6 +46,19 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun selectItem_movesIndicatorWithoutChangingItsLayout() {
+        val bar = createBar()
+        layout(bar)
+        val indicator = bar.getChildAt(0)
+
+        bar.selectItem(1)
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ReadableBottomBar.ANIMATION_DURATION))
+
+        assertEquals(0, indicator.left)
+        assertEquals(200f, indicator.x)
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
@@ -71,7 +85,7 @@ class ReadableBottomBarTest {
 
         assertEquals(2, bar.selectedIndex)
         val indicator = bar.getChildAt(0)
-        assertEquals(400, indicator.left)
+        assertEquals(400f, indicator.x)
     }
 
     @Test
