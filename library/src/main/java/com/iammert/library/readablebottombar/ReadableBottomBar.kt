@@ -7,7 +7,6 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
 import java.lang.IllegalArgumentException
@@ -190,17 +189,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
             if (item.index == selectedIndex) {
                 currentSelectedView = bottomBarItem
-
-                val listener = object : ViewTreeObserver.OnGlobalLayoutListener {
-
-                    override fun onGlobalLayout() {
-                        bottomBarItem.select()
-                        bottomBarItem.viewTreeObserver.removeGlobalOnLayoutListener(this)
-                    }
-
-                }
-
-                bottomBarItem.viewTreeObserver.addOnGlobalLayoutListener(listener)
+                bottomBarItem.select(animate = false)
             }
 
         }
