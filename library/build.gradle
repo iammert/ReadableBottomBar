@@ -1,5 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'maven-publish'
+
+group = 'com.github.iammert'
+version = '0.3.0'
 
 android {
     namespace "com.iammert.library.readablebottombar"
@@ -31,6 +35,12 @@ android {
     testOptions {
         unitTests.includeAndroidResources = true
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -42,4 +52,27 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.9.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifactId = 'ReadableBottomBar'
+
+                pom {
+                    name = 'ReadableBottomBar'
+                    description = 'Yet another material bottom bar library for Android'
+                    url = 'https://github.com/iammert/ReadableBottomBar'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
