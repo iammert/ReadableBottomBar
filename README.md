@@ -55,6 +55,15 @@ bottomBar.setOnItemSelectListener( object :ReadableBottomBar.ItemSelectListener{
 ```kotlin
 bottomBar.selectItem(index)
 ```
+
+* Read the current index
+```kotlin
+val index = bottomBar.selectedIndex
+```
+
+The selected index is saved and restored automatically across configuration changes, as long as the bar has an `android:id`.
+
+Tab `text` can be a string resource (recommended) or a literal string.
 * Customize if you need
 ```xml
 <com.iammert.library.readablebottombar.ReadableBottomBar
@@ -71,8 +80,11 @@ bottomBar.selectItem(index)
 ```
 
 ## Setup
+Requires `minSdk` 21 and AndroidX.
+
 ```gradle
-allprojects {
+// settings.gradle
+dependencyResolutionManagement {
     repositories {
         ...
         maven { url 'https://jitpack.io' }
@@ -80,7 +92,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.iammert:ReadableBottomBar:0.2'
+    implementation 'com.github.iammert:ReadableBottomBar:0.3.0'
 }
 ```
 
