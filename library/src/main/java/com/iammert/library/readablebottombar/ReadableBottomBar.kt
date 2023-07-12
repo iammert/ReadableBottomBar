@@ -24,7 +24,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         companion object {
 
-            fun getType(value: Int) = values().firstOrNull { it.value == value } ?: Icon
+            fun getType(value: Int) = entries.firstOrNull { it.value == value } ?: Icon
 
         }
     }
