@@ -59,6 +59,31 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun tappingSelectedItem_notifiesReselectListenerOnly() {
+        val bar = createBar()
+        layout(bar)
+        val selections = mutableListOf<Int>()
+        val reselections = mutableListOf<Int>()
+        bar.setOnItemSelectListener(object : ReadableBottomBar.ItemSelectListener {
+            override fun onItemSelected(index: Int) {
+                selections += index
+            }
+        })
+        bar.setOnItemReselectListener(object : ReadableBottomBar.ItemReselectListener {
+            override fun onItemReselected(index: Int) {
+                reselections += index
+            }
+        })
+
+        bar.findItemViews()[0].performClick()
+        bar.findItemViews()[1].performClick()
+        bar.findItemViews()[1].performClick()
+
+        assertEquals(listOf(1), selections)
+        assertEquals(listOf(0, 1), reselections)
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 

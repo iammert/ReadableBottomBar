@@ -18,6 +18,14 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         fun onItemSelected(index: Int)
     }
 
+    /**
+     * Notified when the user taps the tab that is already selected, for
+     * example to scroll the current screen back to the top.
+     */
+    interface ItemReselectListener {
+        fun onItemReselected(index: Int)
+    }
+
     enum class ItemType(val value: Int) {
         Text(0),
         Icon(1);
@@ -52,6 +60,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private var indicatorView: View? = null
 
     private var itemSelectListener: ItemSelectListener? = null
+
+    private var itemReselectListener: ItemReselectListener? = null
 
     init {
         val typedArray = context.theme.obtainStyledAttributes(attrs, R.styleable.ReadableBottomBar, defStyleAttr, defStyleAttr)
@@ -130,6 +140,10 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         this.itemSelectListener = itemSelectListener
     }
 
+    fun setOnItemReselectListener(itemReselectListener: ItemReselectListener) {
+        this.itemReselectListener = itemReselectListener
+    }
+
     fun selectItem(index: Int) {
         if (index !in bottomBarItemList.indices) {
             throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.lastIndex}")
@@ -178,6 +192,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                 setOnClickListener {
 
                     if (it == currentSelectedView) {
+                        itemReselectListener?.onItemReselected(item.index)
                         return@setOnClickListener
                     }
 
