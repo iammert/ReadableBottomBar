@@ -14,7 +14,7 @@ import java.lang.IllegalArgumentException
 class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
 
-    interface ItemSelectListener {
+    fun interface ItemSelectListener {
         fun onItemSelected(index: Int)
     }
 
@@ -22,7 +22,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
      * Notified when the user taps the tab that is already selected, for
      * example to scroll the current screen back to the top.
      */
-    interface ItemReselectListener {
+    fun interface ItemReselectListener {
         fun onItemReselected(index: Int)
     }
 

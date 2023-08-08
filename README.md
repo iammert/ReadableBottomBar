@@ -43,12 +43,15 @@ All design and inspiration credits goes to [Ranjit](https://www.uplabs.com/posts
     android:layout_height="56dp"
     app:rbb_tabs="@xml/tabs"/>
 ```
-* Add listener
+* Add listeners
 ```kotlin
-bottomBar.setOnItemSelectListener( object :ReadableBottomBar.ItemSelectListener{
-    override fun onItemSelected(index: Int) {
-    }
-})
+bottomBar.setOnItemSelectListener { index ->
+    // show the page for index
+}
+
+bottomBar.setOnItemReselectListener { index ->
+    // the current tab was tapped again, e.g. scroll to top
+}
 ```
 
 * Set index at runtime

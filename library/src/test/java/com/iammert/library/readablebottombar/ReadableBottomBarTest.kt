@@ -64,16 +64,8 @@ class ReadableBottomBarTest {
         layout(bar)
         val selections = mutableListOf<Int>()
         val reselections = mutableListOf<Int>()
-        bar.setOnItemSelectListener(object : ReadableBottomBar.ItemSelectListener {
-            override fun onItemSelected(index: Int) {
-                selections += index
-            }
-        })
-        bar.setOnItemReselectListener(object : ReadableBottomBar.ItemReselectListener {
-            override fun onItemReselected(index: Int) {
-                reselections += index
-            }
-        })
+        bar.setOnItemSelectListener { selections += it }
+        bar.setOnItemReselectListener { reselections += it }
 
         bar.findItemViews()[0].performClick()
         bar.findItemViews()[1].performClick()
