@@ -96,6 +96,9 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
             )
         }
 
+        require(tabInitialSelectedIndex in bottomBarItemList.indices) {
+            "rbb_initialIndex is $tabInitialSelectedIndex but the bar has ${bottomBarItemList.size} tabs"
+        }
         selectedIndex = tabInitialSelectedIndex
 
         typedArray.recycle()

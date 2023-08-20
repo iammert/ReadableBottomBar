@@ -29,6 +29,13 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun initialIndex_outOfRange_failsWithDescriptiveError() {
+        val error = assertThrows(IllegalArgumentException::class.java) { createBar(initialIndex = 3) }
+
+        assertEquals("rbb_initialIndex is 3 but the bar has 3 tabs", error.message)
+    }
+
+    @Test
     fun selectItem_updatesSelectedIndexAndNotifiesListener() {
         val bar = createBar()
         layout(bar)
