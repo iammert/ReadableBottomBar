@@ -1,6 +1,7 @@
 package com.iammert.library.readablebottombar
 
 import android.app.Activity
+import android.content.pm.ApplicationInfo
 import android.os.Looper
 import android.os.Parcel
 import android.os.Parcelable
@@ -80,6 +81,23 @@ class ReadableBottomBarTest {
 
         assertEquals(listOf(1), selections)
         assertEquals(listOf(0, 1), reselections)
+    }
+
+    @Test
+    fun rtl_indicatorFollowsMirroredItems() {
+        activity.applicationInfo.flags = activity.applicationInfo.flags or ApplicationInfo.FLAG_SUPPORTS_RTL
+        val bar = createBar(initialIndex = 1).apply { layoutDirection = View.LAYOUT_DIRECTION_RTL }
+        layout(bar)
+        val indicator = bar.getChildAt(0)
+        val items = bar.findItemViews()
+
+        assertEquals(items[1].left.toFloat(), indicator.x)
+
+        bar.selectItem(0)
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ReadableBottomBar.ANIMATION_DURATION))
+
+        assertEquals(400, items[0].left)
+        assertEquals(400f, indicator.x)
     }
 
     @Test

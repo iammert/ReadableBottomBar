@@ -218,7 +218,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private fun drawIndicator() {
         indicatorView = View(context).apply {
             layoutParams = LinearLayout.LayoutParams(itemWidth.toInt(), tabIndicatorHeight)
-            translationX = selectedIndex * itemWidth
+            translationX = indicatorTranslation(selectedIndex)
             setBackgroundColor(tabIndicatorColor)
         }
         addView(indicatorView)
@@ -227,10 +227,19 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private fun animateIndicator(currentItemIndex: Int) {
         // Moving the indicator with translationX avoids a layout pass per frame.
         indicatorView?.animate()
-                ?.translationX(currentItemIndex * itemWidth)
+                ?.translationX(indicatorTranslation(currentItemIndex))
                 ?.setDuration(ANIMATION_DURATION)
                 ?.setInterpolator(AccelerateDecelerateInterpolator())
                 ?.start()
+    }
+
+    /**
+     * The indicator is laid out at the start edge, which is the right edge in
+     * RTL layouts where the items are also ordered from right to left.
+     */
+    private fun indicatorTranslation(index: Int): Float {
+        val offset = index * itemWidth
+        return if (layoutDirection == View.LAYOUT_DIRECTION_RTL) -offset else offset
     }
 
     private fun onSelected(index: Int, bottomBarItemView: BottomBarItemView) {
