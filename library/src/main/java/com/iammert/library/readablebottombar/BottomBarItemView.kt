@@ -24,6 +24,8 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
 
     fun setText(text: String) {
         textView.text = text
+        // The icon may be the only visible content, so describe the whole item.
+        contentDescription = text
     }
 
     fun setIconDrawable(drawable: Drawable) {
@@ -62,6 +64,7 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
      * been measured, the content is shown immediately.
      */
     fun select(animate: Boolean = true) {
+        isSelected = true
         val wasHidden = animatedView.visibility != View.VISIBLE
         animatedView.animate().cancel()
         animatedView.visibility = View.VISIBLE
@@ -80,6 +83,7 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
     }
 
     fun deselect(animate: Boolean = true) {
+        isSelected = false
         animatedView.animate().cancel()
         if (!animate || height == 0) {
             animatedView.visibility = View.INVISIBLE

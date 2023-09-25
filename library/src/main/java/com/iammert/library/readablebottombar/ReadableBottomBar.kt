@@ -9,6 +9,11 @@ import android.util.TypedValue
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionInfoCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat
 import java.lang.IllegalArgumentException
 
 class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
@@ -179,6 +184,12 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
             orientation = HORIZONTAL
             tag = TAG_CONTAINER
         }
+        ViewCompat.setAccessibilityDelegate(itemContainerLayout, object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.setCollectionInfo(CollectionInfoCompat.obtain(1, bottomBarItemList.size, false))
+            }
+        })
 
         bottomBarItemList.forEach { item ->
             val bottomBarItem = BottomBarItemView(context).apply {
@@ -191,6 +202,17 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                 setTextSize(item.textSize)
                 setTextColor(item.textColor)
                 setTabColor(tabBackgroundColor)
+                ViewCompat.setAccessibilityDelegate(this, object : AccessibilityDelegateCompat() {
+                    override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                        super.onInitializeAccessibilityNodeInfo(host, info)
+                        info.setCollectionItemInfo(CollectionItemInfoCompat.obtain(0, 1, item.index, 1, false, host.isSelected))
+                        if (host.isSelected) {
+                            // Selecting the current tab only triggers reselection.
+                            info.isClickable = false
+                            info.removeAction(AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_CLICK)
+                        }
+                    }
+                })
 
                 setOnClickListener {
 

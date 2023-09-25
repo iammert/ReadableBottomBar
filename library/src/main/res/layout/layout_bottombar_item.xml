@@ -8,12 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:importantForAccessibility="no"
         android:singleLine="true" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:importantForAccessibility="no"
         android:scaleType="centerInside" />
 
 </merge>

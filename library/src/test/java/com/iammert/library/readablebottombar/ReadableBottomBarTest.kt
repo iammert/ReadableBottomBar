@@ -8,9 +8,11 @@ import android.os.Parcelable
 import android.util.SparseArray
 import android.view.View
 import android.widget.FrameLayout
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -98,6 +100,21 @@ class ReadableBottomBarTest {
 
         assertEquals(400, items[0].left)
         assertEquals(400f, indicator.x)
+    }
+
+    @Test
+    fun items_exposeTextAndSelectionToAccessibilityServices() {
+        val bar = createBar()
+        layout(bar)
+        val items = bar.findItemViews()
+
+        bar.selectItem(2)
+
+        assertEquals(listOf("Home", "Search", "Profile"), items.map { it.contentDescription })
+        assertEquals(listOf(false, false, true), items.map { it.isSelected })
+        val info = AccessibilityNodeInfoCompat.wrap(items[2].createAccessibilityNodeInfo())
+        assertEquals(2, info.collectionItemInfo.columnIndex)
+        assertTrue(info.collectionItemInfo.isSelected)
     }
 
     @Test
