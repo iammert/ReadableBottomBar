@@ -193,7 +193,9 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         bottomBarItemList.forEach { item ->
             val bottomBarItem = BottomBarItemView(context).apply {
-                layoutParams = LinearLayout.LayoutParams(itemWidth.toInt(), itemHeight.toInt() - tabIndicatorHeight)
+                // Weights hand out the pixels left over by integer division, so
+                // the items always fill the whole bar.
+                layoutParams = LinearLayout.LayoutParams(0, itemHeight.toInt() - tabIndicatorHeight, 1f)
 
                 setText(item.text)
                 setItemType(item.type)

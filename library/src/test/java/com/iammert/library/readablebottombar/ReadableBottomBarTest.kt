@@ -118,6 +118,15 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun items_fillWidthThatIsNotDivisibleByTabCount() {
+        val bar = createBar()
+
+        layout(bar, width = 601)
+
+        assertEquals(601, bar.findItemViews().sumOf { it.width })
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
