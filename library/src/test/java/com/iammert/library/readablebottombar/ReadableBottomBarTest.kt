@@ -127,6 +127,18 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun animationDuration_isReadFromAttributes() {
+        val bar = createBar(animationDuration = 100)
+        layout(bar)
+        val indicator = bar.getChildAt(0)
+
+        bar.selectItem(2)
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(100))
+
+        assertEquals(400f, indicator.x)
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
@@ -198,10 +210,11 @@ class ReadableBottomBarTest {
         }
     }
 
-    private fun createBar(initialIndex: Int = 0): ReadableBottomBar {
+    private fun createBar(initialIndex: Int = 0, animationDuration: Long? = null): ReadableBottomBar {
         val attrs = Robolectric.buildAttributeSet()
                 .addAttribute(R.attr.rbb_tabs, "@xml/rbb_test_tabs")
                 .addAttribute(R.attr.rbb_initialIndex, initialIndex.toString())
+                .apply { animationDuration?.let { addAttribute(R.attr.rbb_animationDuration, it.toString()) } }
                 .build()
         return ReadableBottomBar(activity, attrs).also {
             activity.setContentView(FrameLayout(activity).apply { addView(it, FrameLayout.LayoutParams(0, 0)) })

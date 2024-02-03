@@ -22,6 +22,8 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
 
     private lateinit var animatedView: View
 
+    var animationDuration: Long = ANIMATION_DURATION
+
     fun setText(text: String) {
         textView.text = text
         // The icon may be the only visible content, so describe the whole item.
@@ -77,7 +79,7 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
         }
         animatedView.animate()
                 .translationY(0f)
-                .setDuration(ANIMATION_DURATION)
+                .setDuration(animationDuration)
                 .setInterpolator(AccelerateDecelerateInterpolator())
                 .start()
     }
@@ -92,7 +94,7 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
         }
         animatedView.animate()
                 .translationY(height.toFloat())
-                .setDuration(ANIMATION_DURATION)
+                .setDuration(animationDuration)
                 .setInterpolator(AccelerateDecelerateInterpolator())
                 .withEndAction { animatedView.visibility = View.INVISIBLE }
                 .start()

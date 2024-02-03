@@ -79,6 +79,8 @@ Tab `text` can be a string resource (recommended) or a literal string.
     app:rbb_initialIndex=""
     app:rbb_backgroundColor=""
     app:rbb_textSize=""
+    app:rbb_iconColor=""
+    app:rbb_animationDuration="300"
     app:rbb_activeItemType="text or icon"/>
 ```
 

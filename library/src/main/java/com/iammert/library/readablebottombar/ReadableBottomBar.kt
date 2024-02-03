@@ -53,6 +53,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 0
+    private var animationDuration: Long = ANIMATION_DURATION
 
     private var layoutWidth: Float = 0f
     private var layoutHeight: Float = 0f
@@ -76,6 +77,9 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         val defaultIndicatorHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_INDICATOR_HEIGHT_DP, resources.displayMetrics).toInt()
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, defaultIndicatorHeight)
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
+        animationDuration = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_animationDuration, ANIMATION_DURATION.toInt())
+                .coerceAtLeast(0)
+                .toLong()
 
         val defaultTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP, resources.displayMetrics)
         val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, defaultTextSize)
@@ -204,6 +208,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                 setTextSize(item.textSize)
                 setTextColor(item.textColor)
                 setTabColor(tabBackgroundColor)
+                animationDuration = this@ReadableBottomBar.animationDuration
                 ViewCompat.setAccessibilityDelegate(this, object : AccessibilityDelegateCompat() {
                     override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
                         super.onInitializeAccessibilityNodeInfo(host, info)
@@ -252,7 +257,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         // Moving the indicator with translationX avoids a layout pass per frame.
         indicatorView?.animate()
                 ?.translationX(indicatorTranslation(currentItemIndex))
-                ?.setDuration(ANIMATION_DURATION)
+                ?.setDuration(animationDuration)
                 ?.setInterpolator(AccelerateDecelerateInterpolator())
                 ?.start()
     }

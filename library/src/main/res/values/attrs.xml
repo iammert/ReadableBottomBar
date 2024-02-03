@@ -9,6 +9,7 @@
         <attr name="rbb_textColor" format="color" />
         <attr name="rbb_iconColor" format="color" />
         <attr name="rbb_textSize" format="dimension" />
+        <attr name="rbb_animationDuration" format="integer" />
         <attr name="rbb_activeItemType" format="enum">
             <enum name="text" value="0" />
             <enum name="icon" value="1" />
