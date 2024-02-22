@@ -10,6 +10,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import com.iammert.library.readablebottombar.ReadableBottomBar.Companion.ANIMATION_DURATION
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
@@ -23,6 +24,14 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
     private lateinit var animatedView: View
 
     var animationDuration: Long = ANIMATION_DURATION
+
+    init {
+        val outValue = TypedValue()
+        if (context.theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)) {
+            // Drawn as foreground so the opaque item backgrounds do not hide it.
+            foreground = ContextCompat.getDrawable(context, outValue.resourceId)
+        }
+    }
 
     fun setText(text: String) {
         textView.text = text

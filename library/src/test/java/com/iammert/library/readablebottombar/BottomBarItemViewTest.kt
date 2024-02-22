@@ -6,6 +6,7 @@ import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -50,6 +51,13 @@ class BottomBarItemViewTest {
 
         assertEquals(View.VISIBLE, item.textView().visibility)
         assertEquals(0f, item.textView().translationY)
+    }
+
+    @Test
+    fun item_showsTouchFeedback() {
+        val item = createItem()
+
+        assertNotNull(item.foreground)
     }
 
     private fun createItem() = BottomBarItemView(context).apply {
