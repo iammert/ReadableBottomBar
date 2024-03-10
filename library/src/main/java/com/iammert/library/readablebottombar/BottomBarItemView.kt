@@ -10,7 +10,9 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import com.iammert.library.readablebottombar.ReadableBottomBar.Companion.ANIMATION_DURATION
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
@@ -55,6 +57,12 @@ class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: Attri
     fun setTabColor(tabColor: Int) {
         textView.setBackgroundColor(tabColor)
         imageView.setBackgroundColor(tabColor)
+    }
+
+    fun setTextAppearance(@StyleRes textAppearance: Int) {
+        if (textAppearance != 0) {
+            TextViewCompat.setTextAppearance(textView, textAppearance)
+        }
     }
 
     fun setTextSize(textSizePx: Float) {

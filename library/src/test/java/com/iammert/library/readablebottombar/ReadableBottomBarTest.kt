@@ -2,12 +2,14 @@ package com.iammert.library.readablebottombar
 
 import android.app.Activity
 import android.content.pm.ApplicationInfo
+import android.graphics.Color
 import android.os.Looper
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.SparseArray
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
@@ -17,6 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.android.AttributeSetBuilder
 import java.time.Duration
 
 @RunWith(AndroidJUnit4::class)
@@ -139,6 +142,31 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun textAppearance_isAppliedToItemText() {
+        val bar = createBar { addAttribute(R.attr.rbb_textAppearance, "@style/RbbTest.TextAppearance") }
+        layout(bar)
+
+        val text = bar.findItemViews()[0].findViewById<TextView>(R.id.textView)
+
+        assertEquals(20f, text.textSize)
+        assertEquals(Color.RED, text.currentTextColor)
+    }
+
+    @Test
+    fun textSize_overridesTextAppearance() {
+        val bar = createBar {
+            addAttribute(R.attr.rbb_textAppearance, "@style/RbbTest.TextAppearance")
+            addAttribute(R.attr.rbb_textSize, "12px")
+        }
+        layout(bar)
+
+        val text = bar.findItemViews()[0].findViewById<TextView>(R.id.textView)
+
+        assertEquals(12f, text.textSize)
+        assertEquals(Color.RED, text.currentTextColor)
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
@@ -210,11 +238,16 @@ class ReadableBottomBarTest {
         }
     }
 
-    private fun createBar(initialIndex: Int = 0, animationDuration: Long? = null): ReadableBottomBar {
+    private fun createBar(
+            initialIndex: Int = 0,
+            animationDuration: Long? = null,
+            extraAttributes: AttributeSetBuilder.() -> Unit = {}
+    ): ReadableBottomBar {
         val attrs = Robolectric.buildAttributeSet()
                 .addAttribute(R.attr.rbb_tabs, "@xml/rbb_test_tabs")
                 .addAttribute(R.attr.rbb_initialIndex, initialIndex.toString())
                 .apply { animationDuration?.let { addAttribute(R.attr.rbb_animationDuration, it.toString()) } }
+                .apply(extraAttributes)
                 .build()
         return ReadableBottomBar(activity, attrs).also {
             activity.setContentView(FrameLayout(activity).apply { addView(it, FrameLayout.LayoutParams(0, 0)) })

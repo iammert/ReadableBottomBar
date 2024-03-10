@@ -81,9 +81,18 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                 .coerceAtLeast(0)
                 .toLong()
 
-        val defaultTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP, resources.displayMetrics)
+        val textAppearance = typedArray.getResourceId(R.styleable.ReadableBottomBar_rbb_textAppearance, 0)
+        var defaultTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP, resources.displayMetrics)
+        var defaultTextColor = Color.BLACK
+        if (textAppearance != 0) {
+            // rbb_textSize and rbb_textColor win over the appearance when both are set.
+            val appearance = context.obtainStyledAttributes(textAppearance, TEXT_APPEARANCE_ATTRS)
+            defaultTextSize = appearance.getDimension(0, defaultTextSize)
+            defaultTextColor = appearance.getColor(1, defaultTextColor)
+            appearance.recycle()
+        }
         val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, defaultTextSize)
-        val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, Color.BLACK)
+        val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, defaultTextColor)
         val iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
         val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
 
@@ -101,7 +110,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                     textColor,
                     iconColor,
                     config.drawable,
-                    activeItemType
+                    activeItemType,
+                    textAppearance
             )
         }
 
@@ -205,6 +215,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
                 setItemType(item.type)
                 setIconDrawable(item.drawable)
                 setIconColor(item.iconColor)
+                setTextAppearance(item.textAppearance)
                 setTextSize(item.textSize)
                 setTextColor(item.textColor)
                 setTabColor(tabBackgroundColor)
@@ -312,6 +323,8 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         private const val DEFAULT_TEXT_SIZE_SP = 15f
 
         private const val DEFAULT_INDICATOR_HEIGHT_DP = 4f
+
+        private val TEXT_APPEARANCE_ATTRS = intArrayOf(android.R.attr.textSize, android.R.attr.textColor)
 
         const val TAG_CONTAINER = "TAG_CONTAINER"
 

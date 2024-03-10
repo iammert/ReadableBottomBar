@@ -2,6 +2,7 @@ package com.iammert.library.readablebottombar
 
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
+import androidx.annotation.StyleRes
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
 data class BottomBarItem(
@@ -11,5 +12,6 @@ data class BottomBarItem(
         @ColorInt val textColor: Int,
         @ColorInt val iconColor: Int,
         val drawable: Drawable,
-        val type: ItemType
+        val type: ItemType,
+        @StyleRes val textAppearance: Int = 0
 )

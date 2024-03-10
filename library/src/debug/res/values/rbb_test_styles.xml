@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fixtures for unit tests. Only packaged in debug builds. -->
+<resources>
+    <style name="RbbTest.TextAppearance" parent="">
+        <item name="android:textSize">20px</item>
+        <item name="android:textColor">#FFFF0000</item>
+    </style>
+</resources>
