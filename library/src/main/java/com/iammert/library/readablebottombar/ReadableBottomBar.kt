@@ -96,8 +96,14 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         val iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
         val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
 
-        val tabXmlResource = typedArray?.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
-        val bottomBarItemConfigList = ConfigurationXmlParser(context = context, xmlRes = tabXmlResource!!).parse()
+        val tabXmlResource = typedArray.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
+        // Without rbb_tabs the bar stays empty instead of failing to inflate,
+        // which also keeps the layout editor preview working.
+        val bottomBarItemConfigList = if (tabXmlResource != 0) {
+            ConfigurationXmlParser(context = context, xmlRes = tabXmlResource).parse()
+        } else {
+            emptyList()
+        }
 
         setBackgroundColor(tabBackgroundColor)
         orientation = VERTICAL
@@ -115,7 +121,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
             )
         }
 
-        require(tabInitialSelectedIndex in bottomBarItemList.indices) {
+        require(bottomBarItemList.isEmpty() || tabInitialSelectedIndex in bottomBarItemList.indices) {
             "rbb_initialIndex is $tabInitialSelectedIndex but the bar has ${bottomBarItemList.size} tabs"
         }
         selectedIndex = tabInitialSelectedIndex
@@ -128,7 +134,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         layoutWidth = w.toFloat()
         layoutHeight = h.toFloat()
 
-        itemWidth = layoutWidth / bottomBarItemList.size
+        itemWidth = if (bottomBarItemList.isEmpty()) 0f else layoutWidth / bottomBarItemList.size
         itemHeight = layoutHeight
 
         post {

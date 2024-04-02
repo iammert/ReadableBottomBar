@@ -167,6 +167,17 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun missingTabs_inflatesAnEmptyBar() {
+        val bar = ReadableBottomBar(activity, Robolectric.buildAttributeSet().build())
+        activity.setContentView(FrameLayout(activity).apply { addView(bar, FrameLayout.LayoutParams(0, 0)) })
+
+        layout(bar)
+
+        assertEquals(0, bar.findItemViews().size)
+        assertThrows(IllegalArgumentException::class.java) { bar.selectItem(0) }
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
