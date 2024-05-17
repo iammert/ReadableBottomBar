@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
+import androidx.annotation.XmlRes
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
@@ -42,7 +43,13 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    private val bottomBarItemList: List<BottomBarItem>
+    private var bottomBarItemList: List<BottomBarItem> = emptyList()
+
+    private var itemTextSize: Float = 0f
+    private var itemTextColor: Int = Color.BLACK
+    private var itemIconColor: Int = Color.BLACK
+    private var itemTextAppearance: Int = 0
+    private var activeItemType: ItemType = ItemType.Icon
 
     private var tabInitialSelectedIndex = 0
     /**
@@ -91,57 +98,81 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
             defaultTextColor = appearance.getColor(1, defaultTextColor)
             appearance.recycle()
         }
-        val textSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, defaultTextSize)
-        val textColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, defaultTextColor)
-        val iconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
-        val activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
+        itemTextAppearance = textAppearance
+        itemTextSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, defaultTextSize)
+        itemTextColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, defaultTextColor)
+        itemIconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
+        activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
 
         val tabXmlResource = typedArray.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
-        // Without rbb_tabs the bar stays empty instead of failing to inflate,
-        // which also keeps the layout editor preview working.
-        val bottomBarItemConfigList = if (tabXmlResource != 0) {
-            ConfigurationXmlParser(context = context, xmlRes = tabXmlResource).parse()
-        } else {
-            emptyList()
-        }
+        typedArray.recycle()
 
         setBackgroundColor(tabBackgroundColor)
         orientation = VERTICAL
 
-        bottomBarItemList = bottomBarItemConfigList.map { config ->
-            BottomBarItem(
-                    config.index,
-                    config.text,
-                    textSize,
-                    textColor,
-                    iconColor,
-                    config.drawable,
-                    activeItemType,
-                    textAppearance
-            )
+        // Without rbb_tabs the bar stays empty instead of failing to inflate,
+        // which also keeps the layout editor preview working.
+        if (tabXmlResource != 0) {
+            bottomBarItemList = createItems(tabXmlResource)
         }
 
         require(bottomBarItemList.isEmpty() || tabInitialSelectedIndex in bottomBarItemList.indices) {
             "rbb_initialIndex is $tabInitialSelectedIndex but the bar has ${bottomBarItemList.size} tabs"
         }
         selectedIndex = tabInitialSelectedIndex
-
-        typedArray.recycle()
     }
 
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
+    /**
+     * Replaces the tabs with the ones declared in [tabsRes], using the same
+     * XML format as `rbb_tabs`. The selected index is kept when it is still
+     * valid and reset to the first tab otherwise.
+     */
+    fun setTabs(@XmlRes tabsRes: Int) {
+        bottomBarItemList = createItems(tabsRes)
+        if (selectedIndex !in bottomBarItemList.indices) {
+            selectedIndex = 0
+        }
+        currentSelectedView = null
+        if (width > 0 && height > 0) {
+            updateItemSize(width, height)
+            rebuildViews()
+        }
+    }
+
+    private fun createItems(@XmlRes tabsRes: Int): List<BottomBarItem> {
+        return ConfigurationXmlParser(context = context, xmlRes = tabsRes).parse().map { config ->
+            BottomBarItem(
+                    config.index,
+                    config.text,
+                    itemTextSize,
+                    itemTextColor,
+                    itemIconColor,
+                    config.drawable,
+                    activeItemType,
+                    itemTextAppearance
+            )
+        }
+    }
+
+    private fun updateItemSize(w: Int, h: Int) {
         layoutWidth = w.toFloat()
         layoutHeight = h.toFloat()
 
         itemWidth = if (bottomBarItemList.isEmpty()) 0f else layoutWidth / bottomBarItemList.size
         itemHeight = layoutHeight
+    }
 
-        post {
-            removeAllViews()
-            drawIndicator()
-            drawBottomBarItems()
-        }
+    private fun rebuildViews() {
+        removeAllViews()
+        drawIndicator()
+        drawBottomBarItems()
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        updateItemSize(w, h)
+
+        post { rebuildViews() }
     }
 
     override fun onSaveInstanceState(): Parcelable {

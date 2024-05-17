@@ -59,6 +59,11 @@ bottomBar.setOnItemReselectListener { index ->
 bottomBar.selectItem(index)
 ```
 
+* Swap the tabs at runtime
+```kotlin
+bottomBar.setTabs(R.xml.tabs_logged_in)
+```
+
 * Read the current index
 ```kotlin
 val index = bottomBar.selectedIndex

@@ -178,6 +178,42 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun setTabs_replacesItemsAndKeepsValidSelection() {
+        val bar = createBar()
+        layout(bar)
+        bar.selectItem(1)
+
+        bar.setTabs(R.xml.rbb_test_tabs_two)
+
+        val items = bar.findItemViews()
+        assertEquals(listOf("Home", "Profile"), items.map { it.contentDescription })
+        assertEquals(1, bar.selectedIndex)
+        assertEquals(listOf(false, true), items.map { it.isSelected })
+        assertEquals(300f, bar.getChildAt(0).x)
+    }
+
+    @Test
+    fun setTabs_resetsSelectionThatNoLongerExists() {
+        val bar = createBar(initialIndex = 2)
+        layout(bar)
+
+        bar.setTabs(R.xml.rbb_test_tabs_two)
+
+        assertEquals(0, bar.selectedIndex)
+    }
+
+    @Test
+    fun setTabs_onEmptyBar_beforeLayout() {
+        val bar = ReadableBottomBar(activity, Robolectric.buildAttributeSet().build())
+        activity.setContentView(FrameLayout(activity).apply { addView(bar, FrameLayout.LayoutParams(0, 0)) })
+
+        bar.setTabs(R.xml.rbb_test_tabs)
+        layout(bar)
+
+        assertEquals(3, bar.findItemViews().size)
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
