@@ -17,28 +17,28 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionIn
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat
 import java.lang.IllegalArgumentException
 
-class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
 
-    fun interface ItemSelectListener {
-        fun onItemSelected(index: Int)
+    public fun interface ItemSelectListener {
+        public fun onItemSelected(index: Int)
     }
 
     /**
      * Notified when the user taps the tab that is already selected, for
      * example to scroll the current screen back to the top.
      */
-    fun interface ItemReselectListener {
-        fun onItemReselected(index: Int)
+    public fun interface ItemReselectListener {
+        public fun onItemReselected(index: Int)
     }
 
-    enum class ItemType(val value: Int) {
+    public enum class ItemType(internal val value: Int) {
         Text(0),
         Icon(1);
 
-        companion object {
+        internal companion object {
 
-            fun getType(value: Int) = entries.firstOrNull { it.value == value } ?: Icon
+            fun getType(value: Int): ItemType = entries.firstOrNull { it.value == value } ?: Icon
 
         }
     }
@@ -55,7 +55,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
     /**
      * Index of the currently selected tab.
      */
-    var selectedIndex = 0
+    public var selectedIndex: Int = 0
         private set
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
@@ -127,7 +127,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
      * XML format as `rbb_tabs`. The selected index is kept when it is still
      * valid and reset to the first tab otherwise.
      */
-    fun setTabs(@XmlRes tabsRes: Int) {
+    public fun setTabs(@XmlRes tabsRes: Int) {
         bottomBarItemList = createItems(tabsRes)
         if (selectedIndex !in bottomBarItemList.indices) {
             selectedIndex = 0
@@ -195,15 +195,15 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    fun setOnItemSelectListener(itemSelectListener: ItemSelectListener) {
+    public fun setOnItemSelectListener(itemSelectListener: ItemSelectListener) {
         this.itemSelectListener = itemSelectListener
     }
 
-    fun setOnItemReselectListener(itemReselectListener: ItemReselectListener) {
+    public fun setOnItemReselectListener(itemReselectListener: ItemReselectListener) {
         this.itemReselectListener = itemReselectListener
     }
 
-    fun selectItem(index: Int) {
+    public fun selectItem(index: Int) {
         if (index !in bottomBarItemList.indices) {
             throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.lastIndex}")
         }
@@ -331,7 +331,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
     internal class SavedState : BaseSavedState {
 
-        var selectedIndex = 0
+        public var selectedIndex: Int = 0
 
         constructor(superState: Parcelable?) : super(superState)
 
@@ -353,9 +353,12 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
         }
     }
 
-    companion object {
+    public companion object {
 
-        const val ANIMATION_DURATION = 300L
+        /**
+         * Default duration of the indicator and item transitions, in milliseconds.
+         */
+        public const val ANIMATION_DURATION: Long = 300L
 
         private const val DEFAULT_TEXT_SIZE_SP = 15f
 
@@ -363,7 +366,7 @@ class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: Attri
 
         private val TEXT_APPEARANCE_ATTRS = intArrayOf(android.R.attr.textSize, android.R.attr.textColor)
 
-        const val TAG_CONTAINER = "TAG_CONTAINER"
+        private const val TAG_CONTAINER = "TAG_CONTAINER"
 
     }
 

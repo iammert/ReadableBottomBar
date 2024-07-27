@@ -45,6 +45,11 @@ android {
     }
 }
 
+kotlin {
+    // Only applies to production sources, tests are not affected.
+    explicitApi()
+}
+
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.core.ktx

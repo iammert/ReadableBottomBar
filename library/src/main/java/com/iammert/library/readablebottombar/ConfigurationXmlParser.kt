@@ -8,7 +8,7 @@ import androidx.annotation.XmlRes
 import androidx.core.content.ContextCompat
 import org.xmlpull.v1.XmlPullParserException
 
-class ConfigurationXmlParser(private val context: Context, @XmlRes private val xmlRes: Int) {
+internal class ConfigurationXmlParser(private val context: Context, @XmlRes private val xmlRes: Int) {
 
     fun parse(): ArrayList<BottomBarItemConfig> {
         val itemConfigList: ArrayList<BottomBarItemConfig> = arrayListOf()

@@ -5,7 +5,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleRes
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
-data class BottomBarItem(
+internal data class BottomBarItem(
         val index: Int,
         val text: String,
         val textSize: Float,

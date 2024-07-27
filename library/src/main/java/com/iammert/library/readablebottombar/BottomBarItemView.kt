@@ -17,7 +17,7 @@ import com.iammert.library.readablebottombar.ReadableBottomBar.Companion.ANIMATI
 import com.iammert.library.readablebottombar.ReadableBottomBar.ItemType
 
 
-class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
+internal class BottomBarItemView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val layoutView = LayoutInflater.from(context).inflate(R.layout.layout_bottombar_item, this, true)
     private val textView = layoutView.findViewById<AppCompatTextView>(R.id.textView)
