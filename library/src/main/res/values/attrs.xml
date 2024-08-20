@@ -5,6 +5,7 @@
         <attr name="rbb_backgroundColor" format="color" />
         <attr name="rbb_indicatorColor" format="color" />
         <attr name="rbb_indicatorHeight" format="dimension" />
+        <attr name="rbb_indicatorCornerRadius" format="dimension" />
         <attr name="rbb_initialIndex" format="integer" />
         <attr name="rbb_textColor" format="color" />
         <attr name="rbb_iconColor" format="color" />

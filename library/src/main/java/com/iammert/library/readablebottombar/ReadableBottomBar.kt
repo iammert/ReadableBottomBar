@@ -2,6 +2,7 @@ package com.iammert.library.readablebottombar
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -60,6 +61,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 0
+    private var tabIndicatorCornerRadius: Float = 0f
     private var animationDuration: Long = ANIMATION_DURATION
 
     private var layoutWidth: Float = 0f
@@ -83,6 +85,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         tabIndicatorColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_indicatorColor, Color.BLACK)
         val defaultIndicatorHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_INDICATOR_HEIGHT_DP, resources.displayMetrics).toInt()
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, defaultIndicatorHeight)
+        tabIndicatorCornerRadius = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_indicatorCornerRadius, 0f)
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
         animationDuration = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_animationDuration, ANIMATION_DURATION.toInt())
                 .coerceAtLeast(0)
@@ -296,7 +299,10 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         indicatorView = View(context).apply {
             layoutParams = LinearLayout.LayoutParams(itemWidth.toInt(), tabIndicatorHeight)
             translationX = indicatorTranslation(selectedIndex)
-            setBackgroundColor(tabIndicatorColor)
+            background = GradientDrawable().apply {
+                setColor(tabIndicatorColor)
+                cornerRadius = tabIndicatorCornerRadius
+            }
         }
         addView(indicatorView)
     }

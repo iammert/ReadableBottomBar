@@ -3,6 +3,7 @@ package com.iammert.library.readablebottombar
 import android.app.Activity
 import android.content.pm.ApplicationInfo
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Looper
 import android.os.Parcel
 import android.os.Parcelable
@@ -211,6 +212,20 @@ class ReadableBottomBarTest {
         layout(bar)
 
         assertEquals(3, bar.findItemViews().size)
+    }
+
+    @Test
+    fun indicator_usesColorAndCornerRadius() {
+        val bar = createBar {
+            addAttribute(R.attr.rbb_indicatorColor, "#FF00FF00")
+            addAttribute(R.attr.rbb_indicatorCornerRadius, "6px")
+        }
+        layout(bar)
+
+        val background = bar.getChildAt(0).background as GradientDrawable
+
+        assertEquals(6f, background.cornerRadius)
+        assertEquals(Color.GREEN, background.color!!.defaultColor)
     }
 
     @Test
