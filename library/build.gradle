@@ -9,11 +9,10 @@ version = '0.3.0'
 
 android {
     namespace "com.iammert.library.readablebottombar"
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdk 21
-        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

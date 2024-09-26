@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.0"
+agp = "8.6.1"
 kotlin = "1.9.24"
 appcompat = "1.6.1"
 core = "1.13.1"
@@ -7,7 +7,7 @@ junit = "4.13.2"
 androidx-test = "1.5.0"
 androidx-test-ext = "1.1.5"
 espresso = "3.5.1"
-robolectric = "4.12.2"
+robolectric = "4.13"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
