@@ -24,15 +24,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-
     testOptions {
         unitTests.includeAndroidResources = true
     }
@@ -45,6 +36,7 @@ android {
 }
 
 kotlin {
+    jvmToolchain(17)
     // Only applies to production sources, tests are not affected.
     explicitApi()
 }
