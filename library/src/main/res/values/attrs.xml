@@ -17,4 +17,9 @@
             <enum name="icon" value="1" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="ReadableBottomBarTextAppearance">
+        <attr name="android:textSize" />
+        <attr name="android:textColor" />
+    </declare-styleable>
 </resources>

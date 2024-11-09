@@ -96,9 +96,9 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         var defaultTextColor = Color.BLACK
         if (textAppearance != 0) {
             // rbb_textSize and rbb_textColor win over the appearance when both are set.
-            val appearance = context.obtainStyledAttributes(textAppearance, TEXT_APPEARANCE_ATTRS)
-            defaultTextSize = appearance.getDimension(0, defaultTextSize)
-            defaultTextColor = appearance.getColor(1, defaultTextColor)
+            val appearance = context.obtainStyledAttributes(textAppearance, R.styleable.ReadableBottomBarTextAppearance)
+            defaultTextSize = appearance.getDimension(R.styleable.ReadableBottomBarTextAppearance_android_textSize, defaultTextSize)
+            defaultTextColor = appearance.getColor(R.styleable.ReadableBottomBarTextAppearance_android_textColor, defaultTextColor)
             appearance.recycle()
         }
         itemTextAppearance = textAppearance
@@ -369,8 +369,6 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         private const val DEFAULT_TEXT_SIZE_SP = 15f
 
         private const val DEFAULT_INDICATOR_HEIGHT_DP = 4f
-
-        private val TEXT_APPEARANCE_ATTRS = intArrayOf(android.R.attr.textSize, android.R.attr.textColor)
 
         private const val TAG_CONTAINER = "TAG_CONTAINER"
 
