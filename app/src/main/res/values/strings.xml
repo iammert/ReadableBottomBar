@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">ReadableBottomBar</string>
-    
+
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="bag">Bag</string>
     <string name="favorite">Orders</string>
     <string name="profile">Profile</string>
+
+    <string name="style_icon">Active item shows the icon</string>
+    <string name="style_text">Active item shows the text</string>
+    <string name="selected_page">%1$s page</string>
 </resources>

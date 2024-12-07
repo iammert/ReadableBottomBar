@@ -2,28 +2,56 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.iammert.library.readablebottombar.ReadableBottomBar
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        app:rbb_activeItemType="icon"
-        app:rbb_tabs="@xml/tabs"/>
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/app_name" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/style_text"
+        android:textAppearance="?attr/textAppearanceLabelLarge" />
 
     <com.iammert.library.readablebottombar.ReadableBottomBar
+        android:id="@+id/textBottomBar"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_marginTop="64dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
         app:rbb_activeItemType="text"
-        app:rbb_tabs="@xml/tabs"/>
+        app:rbb_tabs="@xml/tabs" />
+
+    <TextView
+        android:id="@+id/pageTitle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        tools:text="Home page" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/style_icon"
+        android:textAppearance="?attr/textAppearanceLabelLarge" />
 
     <com.iammert.library.readablebottombar.ReadableBottomBar
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_marginTop="64dp"
-        app:rbb_tabs="@xml/tabs"/>
+        android:layout_height="56dp"
+        app:rbb_activeItemType="icon"
+        app:rbb_tabs="@xml/tabs" />
 
 </LinearLayout>
