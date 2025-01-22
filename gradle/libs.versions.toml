@@ -5,6 +5,7 @@ appcompat = "1.6.1"
 core = "1.13.1"
 activity = "1.9.3"
 material = "1.12.0"
+viewpager2 = "1.1.0"
 junit = "4.13.2"
 androidx-test = "1.5.0"
 androidx-test-ext = "1.1.5"
@@ -15,6 +16,7 @@ robolectric = "4.13"
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "core" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
