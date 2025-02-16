@@ -5,4 +5,10 @@
         <item name="android:textSize">20px</item>
         <item name="android:textColor">#FFFF0000</item>
     </style>
+
+    <style name="RbbTest.Theme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">#FF0000FF</item>
+        <item name="android:colorBackground">#FFEEEEEE</item>
+        <item name="android:textColorPrimary">#FF111111</item>
+    </style>
 </resources>

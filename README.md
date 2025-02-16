@@ -72,7 +72,8 @@ val index = bottomBar.selectedIndex
 The selected index is saved and restored automatically across configuration changes, as long as the bar has an `android:id`.
 
 Tab `text` can be a string resource (recommended) or a literal string.
-* Customize if you need
+* Customize if you need. Colors that are not set follow the theme: the background uses
+  `android:colorBackground`, the indicator `colorPrimary`, and text and icons `android:textColorPrimary`.
 ```xml
 <com.iammert.library.readablebottombar.ReadableBottomBar
     android:layout_width="match_parent"

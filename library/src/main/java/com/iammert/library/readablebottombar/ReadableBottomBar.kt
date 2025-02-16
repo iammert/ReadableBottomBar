@@ -10,6 +10,8 @@ import android.util.TypedValue
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.LinearLayout
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.annotation.XmlRes
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
@@ -81,8 +83,10 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
     init {
         val typedArray = context.theme.obtainStyledAttributes(attrs, R.styleable.ReadableBottomBar, defStyleAttr, defStyleAttr)
 
-        tabBackgroundColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_backgroundColor, Color.WHITE)
-        tabIndicatorColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_indicatorColor, Color.BLACK)
+        // Unset colors follow the theme, so the bar fits light and dark themes.
+        val themeContentColor = themeColor(android.R.attr.textColorPrimary, Color.BLACK)
+        tabBackgroundColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_backgroundColor, themeColor(android.R.attr.colorBackground, Color.WHITE))
+        tabIndicatorColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_indicatorColor, themeColor(androidx.appcompat.R.attr.colorPrimary, themeContentColor))
         val defaultIndicatorHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_INDICATOR_HEIGHT_DP, resources.displayMetrics).toInt()
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, defaultIndicatorHeight)
         tabIndicatorCornerRadius = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_indicatorCornerRadius, 0f)
@@ -93,7 +97,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
 
         val textAppearance = typedArray.getResourceId(R.styleable.ReadableBottomBar_rbb_textAppearance, 0)
         var defaultTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE_SP, resources.displayMetrics)
-        var defaultTextColor = Color.BLACK
+        var defaultTextColor = themeContentColor
         if (textAppearance != 0) {
             // rbb_textSize and rbb_textColor win over the appearance when both are set.
             val appearance = context.obtainStyledAttributes(textAppearance, R.styleable.ReadableBottomBarTextAppearance)
@@ -104,7 +108,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         itemTextAppearance = textAppearance
         itemTextSize = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_textSize, defaultTextSize)
         itemTextColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_textColor, defaultTextColor)
-        itemIconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, Color.BLACK)
+        itemIconColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_iconColor, themeContentColor)
         activeItemType = ItemType.getType(typedArray.getInt(R.styleable.ReadableBottomBar_rbb_activeItemType, ItemType.Icon.value))
 
         val tabXmlResource = typedArray.getResourceId(R.styleable.ReadableBottomBar_rbb_tabs, 0)
@@ -139,6 +143,16 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         if (width > 0 && height > 0) {
             updateItemSize(width, height)
             rebuildViews()
+        }
+    }
+
+    @ColorInt
+    private fun themeColor(@AttrRes attr: Int, @ColorInt fallback: Int): Int {
+        val typedArray = context.obtainStyledAttributes(intArrayOf(attr))
+        try {
+            return typedArray.getColor(0, fallback)
+        } finally {
+            typedArray.recycle()
         }
     }
 
