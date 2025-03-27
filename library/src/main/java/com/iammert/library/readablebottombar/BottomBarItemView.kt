@@ -1,5 +1,6 @@
 package com.iammert.library.readablebottombar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -27,12 +28,19 @@ internal class BottomBarItemView @JvmOverloads constructor(context: Context, att
 
     var animationDuration: Long = ANIMATION_DURATION
 
-    init {
+    // FrameLayout has supported a foreground drawable since API 1, lint only
+    // knows about the View.setForeground overload added in API 23.
+    @SuppressLint("NewApi")
+    private fun applyTouchFeedback() {
         val outValue = TypedValue()
         if (context.theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)) {
             // Drawn as foreground so the opaque item backgrounds do not hide it.
             foreground = ContextCompat.getDrawable(context, outValue.resourceId)
         }
+    }
+
+    init {
+        applyTouchFeedback()
     }
 
     fun setText(text: String) {
