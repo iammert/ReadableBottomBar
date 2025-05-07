@@ -34,7 +34,6 @@ dependencies {
     implementation libs.androidx.activity.ktx
     implementation libs.androidx.viewpager2
     implementation libs.material
-    testImplementation libs.junit
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.androidx.test.espresso.core
 }
