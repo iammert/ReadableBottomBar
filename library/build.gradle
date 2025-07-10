@@ -9,7 +9,7 @@ version = '0.4.0'
 
 android {
     namespace = "com.iammert.library.readablebottombar"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 21
