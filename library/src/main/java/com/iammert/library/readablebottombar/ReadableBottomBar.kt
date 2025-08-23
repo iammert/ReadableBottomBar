@@ -18,11 +18,24 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat
-import java.lang.IllegalArgumentException
-
+/**
+ * A bottom navigation bar whose tabs swap between an icon and a title when
+ * selected, with an indicator that slides to the selected tab.
+ *
+ * Tabs are declared in an XML resource passed through `app:rbb_tabs` or
+ * [setTabs]. Each `<tab>` element needs a `text` (string resource or literal)
+ * and a `drawable` attribute.
+ *
+ * The selected index is saved with the view hierarchy state, so give the bar
+ * an `android:id` to keep the selection across configuration changes.
+ */
 public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
 
+    /**
+     * Notified when a different tab becomes selected, either by a tap or by
+     * [selectItem].
+     */
     public fun interface ItemSelectListener {
         public fun onItemSelected(index: Int)
     }
@@ -35,8 +48,14 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         public fun onItemReselected(index: Int)
     }
 
+    /**
+     * What the selected tab shows. Unselected tabs show the other one.
+     */
     public enum class ItemType(internal val value: Int) {
+        /** The selected tab shows its title, the others their icon. */
         Text(0),
+
+        /** The selected tab shows its icon, the others their title. */
         Icon(1);
 
         internal companion object {
@@ -56,10 +75,11 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
 
     private var tabInitialSelectedIndex = 0
     /**
-     * Index of the currently selected tab.
+     * Index of the currently selected tab. Use [selectItem] to change it.
      */
     public var selectedIndex: Int = 0
         private set
+
     private var tabBackgroundColor: Int = Color.WHITE
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 0
@@ -212,14 +232,28 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         }
     }
 
+    /**
+     * Sets the listener notified when the selected tab changes, replacing any
+     * previous one.
+     */
     public fun setOnItemSelectListener(itemSelectListener: ItemSelectListener) {
         this.itemSelectListener = itemSelectListener
     }
 
+    /**
+     * Sets the listener notified when the already selected tab is tapped,
+     * replacing any previous one.
+     */
     public fun setOnItemReselectListener(itemReselectListener: ItemReselectListener) {
         this.itemReselectListener = itemReselectListener
     }
 
+    /**
+     * Selects the tab at [index] and notifies the [ItemSelectListener] if the
+     * selection changed. Can be called before the bar has been laid out.
+     *
+     * @throws IllegalArgumentException if [index] is not a valid tab index.
+     */
     public fun selectItem(index: Int) {
         if (index !in bottomBarItemList.indices) {
             throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.lastIndex}")
