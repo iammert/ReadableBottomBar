@@ -6,6 +6,10 @@
         <attr name="rbb_indicatorColor" format="color" />
         <attr name="rbb_indicatorHeight" format="dimension" />
         <attr name="rbb_indicatorCornerRadius" format="dimension" />
+        <attr name="rbb_indicatorPosition" format="enum">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+        </attr>
         <attr name="rbb_initialIndex" format="integer" />
         <attr name="rbb_textColor" format="color" />
         <attr name="rbb_iconColor" format="color" />

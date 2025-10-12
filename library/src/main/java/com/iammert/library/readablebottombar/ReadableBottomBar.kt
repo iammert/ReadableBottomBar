@@ -84,6 +84,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
     private var tabIndicatorColor: Int = Color.BLACK
     private var tabIndicatorHeight: Int = 0
     private var tabIndicatorCornerRadius: Float = 0f
+    private var indicatorAtBottom: Boolean = false
     private var animationDuration: Long = ANIMATION_DURATION
 
     private var layoutWidth: Float = 0f
@@ -110,6 +111,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         val defaultIndicatorHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_INDICATOR_HEIGHT_DP, resources.displayMetrics).toInt()
         tabIndicatorHeight = typedArray.getDimensionPixelSize(R.styleable.ReadableBottomBar_rbb_indicatorHeight, defaultIndicatorHeight)
         tabIndicatorCornerRadius = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_indicatorCornerRadius, 0f)
+        indicatorAtBottom = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_indicatorPosition, INDICATOR_POSITION_TOP) == INDICATOR_POSITION_BOTTOM
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
         animationDuration = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_animationDuration, ANIMATION_DURATION.toInt())
                 .coerceAtLeast(0)
@@ -201,8 +203,13 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
 
     private fun rebuildViews() {
         removeAllViews()
-        drawIndicator()
-        drawBottomBarItems()
+        if (indicatorAtBottom) {
+            drawBottomBarItems()
+            drawIndicator()
+        } else {
+            drawIndicator()
+            drawBottomBarItems()
+        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -282,7 +289,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
 
     private fun drawBottomBarItems() {
         val itemContainerLayout = LinearLayout(context).apply {
-            layoutParams = LinearLayout.LayoutParams(layoutWidth.toInt(), layoutHeight.toInt())
+            layoutParams = LinearLayout.LayoutParams(layoutWidth.toInt(), layoutHeight.toInt() - tabIndicatorHeight)
             orientation = HORIZONTAL
             tag = TAG_CONTAINER
         }
@@ -419,6 +426,10 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         private const val DEFAULT_INDICATOR_HEIGHT_DP = 4f
 
         private const val TAG_CONTAINER = "TAG_CONTAINER"
+
+        private const val INDICATOR_POSITION_TOP = 0
+
+        private const val INDICATOR_POSITION_BOTTOM = 1
 
     }
 

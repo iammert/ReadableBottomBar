@@ -83,6 +83,7 @@ Tab `text` can be a string resource (recommended) or a literal string.
     app:rbb_indicatorHeight=""
     app:rbb_indicatorColor=""
     app:rbb_indicatorCornerRadius=""
+    app:rbb_indicatorPosition="top or bottom"
     app:rbb_initialIndex=""
     app:rbb_backgroundColor=""
     app:rbb_textSize=""

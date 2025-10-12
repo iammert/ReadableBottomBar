@@ -244,6 +244,21 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun indicatorPosition_bottom_drawsIndicatorBelowItems() {
+        val bar = createBar {
+            addAttribute(R.attr.rbb_indicatorPosition, "bottom")
+            addAttribute(R.attr.rbb_indicatorHeight, "8px")
+        }
+        layout(bar)
+
+        val indicator = bar.getChildAt(1)
+
+        assertEquals(112, indicator.top)
+        assertEquals(120, indicator.bottom)
+        assertEquals(112, bar.findItemViews()[0].bottom)
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
