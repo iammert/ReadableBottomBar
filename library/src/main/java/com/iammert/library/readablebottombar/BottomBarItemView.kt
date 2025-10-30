@@ -11,6 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.TooltipCompat
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
@@ -45,8 +46,10 @@ internal class BottomBarItemView @JvmOverloads constructor(context: Context, att
 
     fun setText(text: String) {
         textView.text = text
-        // The icon may be the only visible content, so describe the whole item.
+        // The icon may be the only visible content, so describe the whole item
+        // and show the title on long press.
         contentDescription = text
+        TooltipCompat.setTooltipText(this, text)
     }
 
     fun setIconDrawable(drawable: Drawable) {

@@ -60,6 +60,13 @@ class BottomBarItemViewTest {
         assertNotNull(item.foreground)
     }
 
+    @Test
+    fun item_showsTitleAsTooltip() {
+        val item = createItem()
+
+        assertEquals("Home", item.tooltipText)
+    }
+
     private fun createItem() = BottomBarItemView(context).apply {
         setText("Home")
         setItemType(ReadableBottomBar.ItemType.Text)
