@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.0
+
+- Unset colors now follow the theme instead of white and black, so the bar
+  works with dark themes. Set `rbb_backgroundColor`, `rbb_indicatorColor`,
+  `rbb_textColor` and `rbb_iconColor` to keep the old look.
+- Added `rbb_indicatorPosition` to draw the indicator below the tabs.
+- Tab titles are shown as tooltips on long press.
+- Fixed the item row overflowing the bar by the indicator height.
+- Public API is documented with KDoc.
+- Compiled against API 36.
+
 ## 0.4.0
 
 - **Breaking:** `BottomBarItemView`, `ConfigurationXmlParser`, `BottomBarItem` and
