@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
+    // AGP compiles Kotlin itself, this only selects the Kotlin version it uses.
     alias(libs.plugins.kotlin.android) apply false
 }
 
