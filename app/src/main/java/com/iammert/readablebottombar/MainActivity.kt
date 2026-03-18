@@ -41,8 +41,20 @@ class MainActivity : AppCompatActivity() {
         })
         val selectPage = ReadableBottomBar.ItemSelectListener { index ->
             if (pager.currentItem != index) pager.currentItem = index
+            // Visiting the bag clears its badge.
+            if (index == BAG_INDEX) bottomBar.removeBadge(BAG_INDEX)
         }
         bottomBar.setOnItemSelectListener(selectPage)
         textBottomBar.setOnItemSelectListener(selectPage)
+
+        if (savedInstanceState == null) {
+            bottomBar.setBadge(BAG_INDEX, 3)
+            bottomBar.showBadge(PROFILE_INDEX)
+        }
+    }
+
+    private companion object {
+        const val BAG_INDEX = 2
+        const val PROFILE_INDEX = 4
     }
 }

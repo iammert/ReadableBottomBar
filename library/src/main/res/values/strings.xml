@@ -1,0 +1,8 @@
+<resources>
+    <string name="rbb_badge_new">%1$s, new</string>
+    <plurals name="rbb_badge_count">
+        <item quantity="one">%1$s, %2$d new item</item>
+        <item quantity="other">%1$s, %2$d new items</item>
+    </plurals>
+    <string name="rbb_badge_overflow">99+</string>
+</resources>

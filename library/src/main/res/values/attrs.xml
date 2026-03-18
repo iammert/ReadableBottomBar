@@ -16,6 +16,8 @@
         <attr name="rbb_textSize" format="dimension" />
         <attr name="rbb_textAppearance" format="reference" />
         <attr name="rbb_animationDuration" format="integer" />
+        <attr name="rbb_badgeColor" format="color" />
+        <attr name="rbb_badgeTextColor" format="color" />
         <attr name="rbb_activeItemType" format="enum">
             <enum name="text" value="0" />
             <enum name="icon" value="1" />

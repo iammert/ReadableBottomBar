@@ -86,6 +86,11 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
     private var tabIndicatorCornerRadius: Float = 0f
     private var indicatorAtBottom: Boolean = false
     private var animationDuration: Long = ANIMATION_DURATION
+    private var badgeColor: Int = DEFAULT_BADGE_COLOR
+    private var badgeTextColor: Int = Color.WHITE
+
+    // Tab index to badge count, BottomBarItemView.BADGE_DOT for a dot.
+    private val badges = mutableMapOf<Int, Int>()
 
     private var layoutWidth: Float = 0f
     private var layoutHeight: Float = 0f
@@ -113,6 +118,8 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         tabIndicatorCornerRadius = typedArray.getDimension(R.styleable.ReadableBottomBar_rbb_indicatorCornerRadius, 0f)
         indicatorAtBottom = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_indicatorPosition, INDICATOR_POSITION_TOP) == INDICATOR_POSITION_BOTTOM
         tabInitialSelectedIndex = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_initialIndex, 0)
+        badgeColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_badgeColor, DEFAULT_BADGE_COLOR)
+        badgeTextColor = typedArray.getColor(R.styleable.ReadableBottomBar_rbb_badgeTextColor, Color.WHITE)
         animationDuration = typedArray.getInt(R.styleable.ReadableBottomBar_rbb_animationDuration, ANIMATION_DURATION.toInt())
                 .coerceAtLeast(0)
                 .toLong()
@@ -158,6 +165,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
      */
     public fun setTabs(@XmlRes tabsRes: Int) {
         bottomBarItemList = createItems(tabsRes)
+        badges.clear()
         if (selectedIndex !in bottomBarItemList.indices) {
             selectedIndex = 0
         }
@@ -256,6 +264,54 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
     }
 
     /**
+     * Shows [count] in a badge on the tab at [index]. Counts above 99 are
+     * shown as "99+", and 0 removes the badge.
+     *
+     * @throws IllegalArgumentException if [index] is not a valid tab index or
+     * [count] is negative.
+     */
+    public fun setBadge(index: Int, count: Int) {
+        require(count >= 0) { "Badge count must not be negative, was $count" }
+        updateBadge(index, count)
+    }
+
+    /**
+     * Shows a dot badge without a count on the tab at [index].
+     *
+     * @throws IllegalArgumentException if [index] is not a valid tab index.
+     */
+    public fun showBadge(index: Int) {
+        updateBadge(index, BottomBarItemView.BADGE_DOT)
+    }
+
+    /**
+     * Removes the badge from the tab at [index], if there is one.
+     *
+     * @throws IllegalArgumentException if [index] is not a valid tab index.
+     */
+    public fun removeBadge(index: Int) {
+        updateBadge(index, 0)
+    }
+
+    private fun updateBadge(index: Int, count: Int) {
+        require(index in bottomBarItemList.indices) {
+            "Index should be in range of 0-${bottomBarItemList.lastIndex}"
+        }
+        if (count == 0) badges.remove(index) else badges[index] = count
+        findItemView(index)?.setBadge(count, badgeColor, badgeTextColor)
+    }
+
+    private fun findItemView(index: Int): BottomBarItemView? {
+        for (i in 0 until childCount) {
+            val child = getChildAt(i)
+            if (TAG_CONTAINER == child.tag) {
+                return (child as LinearLayout).getChildAt(index) as? BottomBarItemView
+            }
+        }
+        return null
+    }
+
+    /**
      * Selects the tab at [index] and notifies the [ItemSelectListener] if the
      * selection changed. Can be called before the bar has been laid out.
      *
@@ -276,14 +332,9 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
             return
         }
 
-        val item = bottomBarItemList[index]
-        for (i in 0 until childCount) {
-            if (TAG_CONTAINER == getChildAt(i).tag) {
-                val selectedItemView = ((getChildAt(i) as LinearLayout).getChildAt(index) as BottomBarItemView)
-                if (selectedItemView != currentSelectedView) {
-                    onSelected(item.index, selectedItemView)
-                }
-            }
+        val selectedItemView = findItemView(index) ?: return
+        if (selectedItemView != currentSelectedView) {
+            onSelected(index, selectedItemView)
         }
     }
 
@@ -339,6 +390,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
             }
 
             itemContainerLayout.addView(bottomBarItem)
+            badges[item.index]?.let { bottomBarItem.setBadge(it, badgeColor, badgeTextColor) }
 
             if (item.index == selectedIndex) {
                 currentSelectedView = bottomBarItem
@@ -426,6 +478,8 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         private const val DEFAULT_INDICATOR_HEIGHT_DP = 4f
 
         private const val TAG_CONTAINER = "TAG_CONTAINER"
+
+        private const val DEFAULT_BADGE_COLOR = 0xFFE53935.toInt()
 
         private const val INDICATOR_POSITION_TOP = 0
 

@@ -64,6 +64,13 @@ bottomBar.selectItem(index)
 bottomBar.setTabs(R.xml.tabs_logged_in)
 ```
 
+* Show badges
+```kotlin
+bottomBar.setBadge(index, 3)  // shows "3", counts above 99 show "99+"
+bottomBar.showBadge(index)    // shows a dot
+bottomBar.removeBadge(index)
+```
+
 * Read the current index
 ```kotlin
 val index = bottomBar.selectedIndex
@@ -90,6 +97,8 @@ Tab `text` can be a string resource (recommended) or a literal string.
     app:rbb_textAppearance="@style/TextAppearance.MaterialComponents.Caption"
     app:rbb_iconColor=""
     app:rbb_animationDuration="300"
+    app:rbb_badgeColor=""
+    app:rbb_badgeTextColor=""
     app:rbb_activeItemType="text or icon"/>
 ```
 

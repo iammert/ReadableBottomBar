@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -259,6 +260,63 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun setBadge_showsCountAndDescribesIt() {
+        val bar = createBar()
+        layout(bar)
+
+        bar.setBadge(1, 3)
+
+        val item = bar.findItemViews()[1]
+        assertEquals("3", item.badgeView()?.text)
+        assertEquals("Search, 3 new items", item.contentDescription)
+    }
+
+    @Test
+    fun setBadge_largeCount_isCapped() {
+        val bar = createBar()
+        layout(bar)
+
+        bar.setBadge(0, 120)
+
+        assertEquals("99+", bar.findItemViews()[0].badgeView()?.text)
+    }
+
+    @Test
+    fun showBadge_showsDotWithoutText() {
+        val bar = createBar()
+        layout(bar)
+
+        bar.showBadge(2)
+
+        val item = bar.findItemViews()[2]
+        assertEquals("", item.badgeView()?.text)
+        assertEquals("Profile, new", item.contentDescription)
+    }
+
+    @Test
+    fun badges_surviveResizeAndCanBeRemoved() {
+        val bar = createBar()
+        bar.setBadge(1, 2)
+        layout(bar)
+        layout(bar, width = 900)
+
+        assertEquals("2", bar.findItemViews()[1].badgeView()?.text)
+
+        bar.removeBadge(1)
+
+        assertNull(bar.findItemViews()[1].badgeView())
+        assertEquals("Search", bar.findItemViews()[1].contentDescription)
+    }
+
+    @Test
+    fun setBadge_invalidArguments_throw() {
+        val bar = createBar()
+
+        assertThrows(IllegalArgumentException::class.java) { bar.setBadge(3, 1) }
+        assertThrows(IllegalArgumentException::class.java) { bar.setBadge(0, -1) }
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 
@@ -353,6 +411,13 @@ class ReadableBottomBarTest {
         }
         // One pass lays out the bar, the next one lays out the items it posted.
         repeat(2) { shadowOf(Looper.getMainLooper()).idle() }
+    }
+
+    /** The visible badge of an item, or null when it has none. */
+    private fun BottomBarItemView.badgeView(): TextView? {
+        return (0 until childCount).map { getChildAt(it) }
+                .filterIsInstance<TextView>()
+                .firstOrNull { it.id == View.NO_ID && it.visibility == View.VISIBLE }
     }
 
     private fun View.findItemViews(): List<BottomBarItemView> {
