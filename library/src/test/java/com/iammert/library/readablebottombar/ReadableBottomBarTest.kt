@@ -309,6 +309,25 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun badges_surviveSaveAndRestore() {
+        val bar = createBar().apply { id = BAR_ID }
+        layout(bar)
+        bar.setBadge(0, 7)
+        bar.showBadge(2)
+        val container = SparseArray<Parcelable>()
+        bar.saveHierarchyState(container)
+
+        val restored = createBar().apply { id = BAR_ID }
+        restored.restoreHierarchyState(parcelRoundTrip(container))
+        layout(restored)
+
+        val items = restored.findItemViews()
+        assertEquals("7", items[0].badgeView()?.text)
+        assertNull(items[1].badgeView())
+        assertEquals("", items[2].badgeView()?.text)
+    }
+
+    @Test
     fun setBadge_invalidArguments_throw() {
         val bar = createBar()
 

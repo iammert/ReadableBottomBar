@@ -228,7 +228,10 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
     }
 
     override fun onSaveInstanceState(): Parcelable {
-        return SavedState(super.onSaveInstanceState()).also { it.selectedIndex = selectedIndex }
+        return SavedState(super.onSaveInstanceState()).also {
+            it.selectedIndex = selectedIndex
+            it.badges = badges.toMap()
+        }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
@@ -237,6 +240,9 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
             return
         }
         super.onRestoreInstanceState(state.superState)
+        state.badges.filterKeys { it in bottomBarItemList.indices }.forEach { (index, count) ->
+            updateBadge(index, count)
+        }
         if (state.selectedIndex !in bottomBarItemList.indices) {
             return
         }
@@ -446,15 +452,22 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
 
         public var selectedIndex: Int = 0
 
+        public var badges: Map<Int, Int> = emptyMap()
+
         constructor(superState: Parcelable?) : super(superState)
 
         private constructor(parcel: Parcel) : super(parcel) {
             selectedIndex = parcel.readInt()
+            val badgeIndexes = parcel.createIntArray() ?: IntArray(0)
+            val badgeCounts = parcel.createIntArray() ?: IntArray(0)
+            badges = badgeIndexes.zip(badgeCounts).toMap()
         }
 
         override fun writeToParcel(out: Parcel, flags: Int) {
             super.writeToParcel(out, flags)
             out.writeInt(selectedIndex)
+            out.writeIntArray(badges.keys.toIntArray())
+            out.writeIntArray(badges.values.toIntArray())
         }
 
         companion object {
