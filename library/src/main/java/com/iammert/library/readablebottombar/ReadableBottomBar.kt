@@ -249,7 +249,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         if (currentSelectedView == null) {
             selectedIndex = state.selectedIndex
         } else {
-            selectItem(state.selectedIndex)
+            selectItem(state.selectedIndex, animate = false)
         }
     }
 
@@ -321,9 +321,12 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
      * Selects the tab at [index] and notifies the [ItemSelectListener] if the
      * selection changed. Can be called before the bar has been laid out.
      *
+     * @param animate whether the indicator and the tabs animate to the new
+     * selection.
      * @throws IllegalArgumentException if [index] is not a valid tab index.
      */
-    public fun selectItem(index: Int) {
+    @JvmOverloads
+    public fun selectItem(index: Int, animate: Boolean = true) {
         if (index !in bottomBarItemList.indices) {
             throw IllegalArgumentException("Index should be in range of 0-${bottomBarItemList.lastIndex}")
         }
@@ -340,7 +343,7 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
 
         val selectedItemView = findItemView(index) ?: return
         if (selectedItemView != currentSelectedView) {
-            onSelected(index, selectedItemView)
+            onSelected(index, selectedItemView, animate)
         }
     }
 
@@ -420,13 +423,19 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         addView(indicatorView)
     }
 
-    private fun animateIndicator(currentItemIndex: Int) {
+    private fun moveIndicator(currentItemIndex: Int, animate: Boolean) {
+        val indicator = indicatorView ?: return
+        if (!animate) {
+            indicator.animate().cancel()
+            indicator.translationX = indicatorTranslation(currentItemIndex)
+            return
+        }
         // Moving the indicator with translationX avoids a layout pass per frame.
-        indicatorView?.animate()
-                ?.translationX(indicatorTranslation(currentItemIndex))
-                ?.setDuration(animationDuration)
-                ?.setInterpolator(AccelerateDecelerateInterpolator())
-                ?.start()
+        indicator.animate()
+                .translationX(indicatorTranslation(currentItemIndex))
+                .setDuration(animationDuration)
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .start()
     }
 
     /**
@@ -438,13 +447,13 @@ public class ReadableBottomBar @JvmOverloads constructor(context: Context, attrs
         return if (layoutDirection == View.LAYOUT_DIRECTION_RTL) -offset else offset
     }
 
-    private fun onSelected(index: Int, bottomBarItemView: BottomBarItemView) {
-        animateIndicator(index)
+    private fun onSelected(index: Int, bottomBarItemView: BottomBarItemView, animate: Boolean = true) {
+        moveIndicator(index, animate)
 
-        currentSelectedView?.deselect()
+        currentSelectedView?.deselect(animate)
         selectedIndex = index
         currentSelectedView = bottomBarItemView
-        currentSelectedView?.select()
+        currentSelectedView?.select(animate)
         itemSelectListener?.onItemSelected(index)
     }
 

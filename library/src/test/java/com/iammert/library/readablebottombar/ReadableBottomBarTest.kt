@@ -336,6 +336,19 @@ class ReadableBottomBarTest {
     }
 
     @Test
+    fun selectItem_withoutAnimation_appliesImmediately() {
+        val bar = createBar()
+        layout(bar)
+        val items = bar.findItemViews()
+
+        bar.selectItem(2, animate = false)
+
+        assertEquals(400f, bar.getChildAt(0).x)
+        assertEquals(View.VISIBLE, items[2].findViewById<View>(R.id.imageView).visibility)
+        assertEquals(View.INVISIBLE, items[0].findViewById<View>(R.id.imageView).visibility)
+    }
+
+    @Test
     fun selectItem_outOfRange_throws() {
         val bar = createBar()
 

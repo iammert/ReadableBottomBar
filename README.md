@@ -57,6 +57,7 @@ bottomBar.setOnItemReselectListener { index ->
 * Set index at runtime
 ```kotlin
 bottomBar.selectItem(index)
+bottomBar.selectItem(index, animate = false)
 ```
 
 * Swap the tabs at runtime
