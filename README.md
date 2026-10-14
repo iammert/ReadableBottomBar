@@ -116,7 +116,7 @@ dependencyResolutionManagement {
 }
 
 dependencies {
-    implementation 'com.github.iammert:ReadableBottomBar:1.0.0'
+    implementation 'com.github.iammert:ReadableBottomBar:1.1.0'
 }
 ```
 

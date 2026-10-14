@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0
+
+- Added badges: `setBadge(index, count)`, `showBadge(index)` and `removeBadge(index)`,
+  styled with `rbb_badgeColor` and `rbb_badgeTextColor`. Badges are saved with the
+  instance state and included in the tab's content description.
+- Added `selectItem(index, animate)` to change tabs without animation.
+- Restoring the saved selection after layout no longer animates.
+- Built with AGP 9.4 and Kotlin 2.4. The library still supports API 21.
+
 ## 1.0.0
 
 - Unset colors now follow the theme instead of white and black, so the bar
